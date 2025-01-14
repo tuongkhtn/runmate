@@ -1,6 +1,8 @@
 import "package:flutter/material.dart";
 import "../../../common/utils/constants.dart";
 import "../services/auth_service.dart";
+import "../widgets/custom_elevated_button.dart";
+import "../widgets/custom_text_form_field.dart";
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -91,32 +93,15 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 const SizedBox(height: 20),
 
-                TextFormField(
+                // Trường nhập Email
+                CustomTextFormField(
                   controller: _emailController,
-                  style: const TextStyle(color: Colors.white), // Màu chữ của nội dung TextField
-                  decoration: InputDecoration(
-                    labelText: 'Email',
-                    labelStyle: const TextStyle(color: Colors.white), // Màu chữ của label
-                    prefixIcon: const Icon(Icons.email, color: Colors.white), // Icon màu trắng
-                    filled: true, // Để bật màu nền
-                    fillColor: Colors.white.withOpacity(0.1), // Màu nền với độ trong suốt
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.white), // Viền màu trắng khi không focus
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.white), // Viền màu trắng khi focus
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
+                  labelText: 'Email',
+                  prefixIcon: Icons.email,
                   validator: (value) {
                     if(value == null || value.trim().isEmpty) {
                       return "Email is required!";
                     }
-
                     final emailRegex = RegExp(
                         r'^[a-z|0-9|A-Z]*([_][a-z|0-9|A-Z]+)*([.][a-z|0-9|A-Z]+)*([.][a-z|0-9|A-Z]+)*(([_][a-z|0-9|A-Z]+)*)?@[a-z][a-z|0-9|A-Z]*\.([a-z][a-z|0-9|A-Z]*(\.[a-z][a-z|0-9|A-Z]*)?)$'); // Kiểm tra email hợp lệ
                     if (!emailRegex.hasMatch(value)) {
@@ -128,53 +113,28 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 const SizedBox(height: 20),
 
-                TextFormField(
+                // Trường nhập Password
+                CustomTextFormField(
                   controller: _passwordController,
-                  obscureText: true, // Ẩn nội dung nhập
-                  style: const TextStyle(color: Colors.white), // Màu chữ của nội dung TextField
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    labelStyle: const TextStyle(color: Colors.white), // Màu chữ của label
-                    prefixIcon: const Icon(Icons.lock, color: Colors.white), // Icon màu trắng
-                    filled: true, // Để bật màu nền
-                    fillColor: Colors.white.withOpacity(0.1), // Màu nền với độ trong suốt
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.white), // Viền màu trắng khi không focus
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.white), // Viền màu trắng khi focus
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
+                  labelText: "Password",
+                  prefixIcon: Icons.lock,
+                  obscureText: true,
                   validator: (value) {
                     if(value == null || value.trim().isEmpty) {
-                      return "Password is required";
+                      return "Password is required!";
                     }
-
                     return null;
                   },
                 ),
 
                 const SizedBox(height: 30),
 
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: kPrimaryColor,
-                    padding: const EdgeInsets.symmetric(vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
+                CustomElevatedButton(
+                  isLoading: _isLoading,
                   onPressed: _login,
-                  child: const Text(
-                    'Log In',
-                    style: TextStyle(fontSize: 18),
-                  ),
+                  text: "Login"
                 ),
+
                 const SizedBox(height: 20),
                 Center(
                   child: GestureDetector(

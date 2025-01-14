@@ -2,7 +2,8 @@ import "package:flutter/material.dart";
 import "../../../common/utils/constants.dart";
 import "../models/user_model.dart";
 import "../services/auth_service.dart";
-import "package:firebase_auth/firebase_auth.dart";
+import "../widgets/custom_text_form_field.dart";
+import "../widgets/custom_elevated_button.dart";
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -112,61 +113,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 const SizedBox(height: 20),
 
                 // Trường nhập Name
-                TextFormField(
+                CustomTextFormField(
                   controller: _nameController,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                    labelText: 'Name',
-                    labelStyle: const TextStyle(color: Colors.white),
-                    prefixIcon: const Icon(Icons.person, color: Colors.white),
-                    filled: true,
-                    fillColor: Colors.white.withOpacity(0.1),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.white),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.white),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
+                  labelText: "Name",
+                  prefixIcon: Icons.person,
                   validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Name is required';
+                    if(value == null || value.trim().isEmpty) {
+                      return "Name is required!";
                     }
                     return null;
                   },
                 ),
+
                 const SizedBox(height: 20),
 
-                // Trường nhập Email
-                TextFormField(
+                // Trường nhập email
+                CustomTextFormField(
                   controller: _emailController,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                    labelText: 'Email',
-                    labelStyle: const TextStyle(color: Colors.white),
-                    prefixIcon: const Icon(Icons.email, color: Colors.white),
-                    filled: true,
-                    fillColor: Colors.white.withOpacity(0.1),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.white),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.white),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
+                  labelText: "Email",
+                  prefixIcon: Icons.email,
                   validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Email is required';
+                    if(value == null || value.trim().isEmpty) {
+                      return "Email is required!";
                     }
                     final emailRegex = RegExp(
                         r'^[a-z|0-9|A-Z]*([_][a-z|0-9|A-Z]+)*([.][a-z|0-9|A-Z]+)*([.][a-z|0-9|A-Z]+)*(([_][a-z|0-9|A-Z]+)*)?@[a-z][a-z|0-9|A-Z]*\.([a-z][a-z|0-9|A-Z]*(\.[a-z][a-z|0-9|A-Z]*)?)$'); // Kiểm tra email hợp lệ
@@ -176,90 +144,54 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     return null;
                   },
                 ),
+
                 const SizedBox(height: 20),
 
                 // Trường nhập Password
-                TextFormField(
+                CustomTextFormField(
                   controller: _passwordController,
+                  labelText: "Password",
+                  prefixIcon: Icons.lock,
                   obscureText: true,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    labelStyle: const TextStyle(color: Colors.white),
-                    prefixIcon: const Icon(Icons.lock, color: Colors.white),
-                    filled: true,
-                    fillColor: Colors.white.withOpacity(0.1),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.white),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.white),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
                   validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Password is required';
+                    if(value == null || value.trim().isEmpty) {
+                      return "Password is required!";
                     }
-                    if (value.length < 6) {
-                      return 'Password must be at least 6 characters';
+                    if(value.length < 6) {
+                      return "Password must be at least 6 characters";
                     }
                     return null;
                   },
                 ),
+
                 const SizedBox(height: 30),
 
                 // Trường nhập Confirm Password
-                TextFormField(
+                CustomTextFormField(
                   controller: _confirmPasswordController,
+                  labelText: "Confirm Password",
+                  prefixIcon: Icons.lock_outline,
                   obscureText: true,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                    labelText: 'Confirm Password',
-                    labelStyle: const TextStyle(color: Colors.white),
-                    prefixIcon: const Icon(Icons.lock_outline, color: Colors.white),
-                    filled: true,
-                    fillColor: Colors.white.withOpacity(0.1),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.white),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.white),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
                   validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Confirm Password is required';
+                    if(value == null || value.trim().isEmpty) {
+                      return "Confirm password is required!";
                     }
-                    if (value != _passwordController.text) {
-                      return 'Passwords do not match';
+                    if(value != _passwordController.text) {
+                      return "Passwords do not match";
                     }
                     return null;
                   },
                 ),
+
                 const SizedBox(height: 30),
 
                 // Nút Register
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: kPrimaryColor,
-                    padding: const EdgeInsets.symmetric(vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  onPressed: _isLoading ? null : _register,
-                  child: const Text(
-                    'Register',
-                    style: TextStyle(fontSize: 18),
-                  ),
+                CustomElevatedButton(
+                  isLoading: _isLoading,
+                  onPressed: _register,
+                  text: 'Register',
                 ),
+
                 const SizedBox(height: 20),
 
                 // Text chuyển đến Login
