@@ -1,4 +1,4 @@
-class User {
+class UserModel {
   final String userId;
   final String name;
   final String email;
@@ -7,7 +7,7 @@ class User {
   final int totalTime;
   final DateTime createdAt;
 
-  User({
+  UserModel({
     required this.userId,
     required this.name,
     required this.email,
@@ -17,8 +17,8 @@ class User {
     required this.createdAt,
   });
 
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
+  factory UserModel.fromJson(Map<String, dynamic> json) {
+    return UserModel(
       userId: json['userId'] as String,
       name: json['name'] as String,
       email: json['email'] as String,
@@ -39,5 +39,25 @@ class User {
       'totalTime': totalTime,
       'createdAt': createdAt.toIso8601String(),
     };
+  }
+
+  UserModel copyWith({
+    String? userId,
+    String? name,
+    String? email,
+    String? avatarUrl,
+    double? totalDistance,
+    int? totalTime,
+    DateTime? createdAt,
+  }) {
+    return UserModel(
+      userId: userId ?? this.userId,
+      name: name ?? this.name,
+      email: email ?? this.email,
+      avatarUrl: avatarUrl ?? this.avatarUrl,
+      totalDistance: totalDistance ?? this.totalDistance,
+      totalTime: totalTime ?? this.totalTime,
+      createdAt: createdAt ?? this.createdAt,
+    );
   }
 }
