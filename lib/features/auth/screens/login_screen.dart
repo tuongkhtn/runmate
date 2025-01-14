@@ -96,15 +96,15 @@ class LoginScreen extends StatelessWidget {
               Center(
                 child: GestureDetector(
                   onTap: () {
-                    // TODO: Điều hướng đến màn hình đăng ký
                     Navigator.pushNamed(context, '/register');
                   },
                   child: const Text(
                     'Create a New Account',
                     style: TextStyle(
-                      color: kPrimaryColor,
+                      color: Colors.white,
                       fontSize: 16,
                       decoration: TextDecoration.underline,
+                      decorationColor: Colors.white,
                     ),
                   ),
                 ),

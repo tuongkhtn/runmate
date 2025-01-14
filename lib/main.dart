@@ -1,8 +1,9 @@
 import "features/onboarding/screens/get_started_screen.dart";
 import "features/auth/screens/login_screen.dart";
+import "features/auth/screens/register_screen.dart";
 import 'package:flutter/material.dart';
 
-void main() {
+void main() async {
   runApp(const MyApp());
 }
 
@@ -17,6 +18,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const GetStartedScreen(),
         '/login': (context) => const LoginScreen(),
+        '/register': (context) => const RegisterScreen(),
       },
       initialRoute: '/',
     );
