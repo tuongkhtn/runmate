@@ -1,4 +1,5 @@
-import 'screens/get_started_screen.dart';
+import "features/onboarding/screens/get_started_screen.dart";
+import "features/auth/screens/login_screen.dart";
 import 'package:flutter/material.dart';
 
 void main() {
@@ -15,6 +16,7 @@ class MyApp extends StatelessWidget {
       title: "Runmate",
       routes: {
         '/': (context) => const GetStartedScreen(),
+        '/login': (context) => const LoginScreen(),
       },
       initialRoute: '/',
     );

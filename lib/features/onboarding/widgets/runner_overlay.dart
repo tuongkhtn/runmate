@@ -1,5 +1,5 @@
 import "package:flutter/material.dart";
-import "../utils/constants.dart";
+import "../../../common/utils/constants.dart";
 
 class RunnerOverlay extends StatelessWidget {
   const RunnerOverlay({super.key});
@@ -63,14 +63,21 @@ class RunnerOverlay extends StatelessWidget {
                         style: TextStyle(
                           color: Colors.white.withOpacity(0.6),
                         ),
-                        children: const [
-                          TextSpan(
-                              text: 'Login',
-                              style: TextStyle(
-                                color: Colors.white,
-                                decoration: TextDecoration.underline,
-                                decorationColor: Colors.white,
+                        children: [
+                          WidgetSpan(
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.pushNamed(context, '/login');
+                              },
+                              child: const Text(
+                                'Login',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    decoration: TextDecoration.underline,
+                                    decorationColor: Colors.white,
+                                  )
                               )
+                            )
                           )
                         ]
                     )
