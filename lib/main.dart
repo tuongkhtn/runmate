@@ -1,3 +1,4 @@
+import "features/let_run/screens/run_screen.dart";
 import "features/onboarding/screens/get_started_screen.dart";
 import "features/auth/screens/login_screen.dart";
 import "features/auth/screens/register_screen.dart";
@@ -19,8 +20,9 @@ class MyApp extends StatelessWidget {
         '/': (context) => const GetStartedScreen(),
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
+        '/let_run': (context) => const RunScreen(),
       },
-      initialRoute: '/',
+      initialRoute: '/let_run',
     );
   }
 }
