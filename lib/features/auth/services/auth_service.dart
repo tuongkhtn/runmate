@@ -47,6 +47,27 @@ class AuthService {
     }
   }
 
+  Future<UserModel?> getCurrentUser() async {
+    try {
+      final user = _auth.currentUser;
+      if(user == null) {
+        return null;
+      }
+
+      final userDoc = await _firestore.collection("users").doc(user.uid).get();
+
+      if(!userDoc.exists) {
+        return null;
+      }
+
+      return UserModel.fromJson(userDoc.data()!);
+
+    } catch(e) {
+      print("Error fetching current user: $e");
+      throw Exception("Failed to fetch current user");
+    }
+  }
+
   String _getErrorMessage(String code) {
     switch(code) {
       case 'user-not-found':

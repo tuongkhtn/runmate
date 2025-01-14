@@ -40,4 +40,24 @@ class UserModel {
       'createdAt': createdAt.toIso8601String(),
     };
   }
+
+  UserModel copyWith({
+    String? userId,
+    String? name,
+    String? email,
+    String? avatarUrl,
+    double? totalDistance,
+    int? totalTime,
+    DateTime? createdAt,
+  }) {
+    return UserModel(
+      userId: userId ?? this.userId,
+      name: name ?? this.name,
+      email: email ?? this.email,
+      avatarUrl: avatarUrl ?? this.avatarUrl,
+      totalDistance: totalDistance ?? this.totalDistance,
+      totalTime: totalTime ?? this.totalTime,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
 }

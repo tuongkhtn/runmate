@@ -1,9 +1,11 @@
 import "package:flutter/material.dart";
+import "package:provider/provider.dart";
 import "../../../common/utils/constants.dart";
 import "../models/user_model.dart";
 import "../services/auth_service.dart";
 import "../widgets/custom_text_form_field.dart";
 import "../widgets/custom_elevated_button.dart";
+import "../../../common/providers/user_provider.dart";
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -65,6 +67,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
         if(newUser != null) {
           await _authService.saveUserToFirestore(newUser);
+
+          // Lưu thông tin người dùng vào Provider
+          Provider.of<UserProvider>(context, listen: false).setUser(newUser);
+
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("User registered successfully!")),
           );

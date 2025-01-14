@@ -1,8 +1,10 @@
 import "package:flutter/material.dart";
+import "package:provider/provider.dart";
 import "../../../common/utils/constants.dart";
 import "../services/auth_service.dart";
 import "../widgets/custom_elevated_button.dart";
 import "../widgets/custom_text_form_field.dart";
+import "../../../common/providers/user_provider.dart";
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -44,20 +46,23 @@ class _LoginScreenState extends State<LoginScreen> {
       final user = await _authService.signInWithEmailAndPassword(email, password);
 
       if(user != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Login successful!")),
-        );
+        final userModel = await _authService.getCurrentUser();
+        if(userModel != null) {
+          Provider.of<UserProvider>(context, listen: false).setUser(userModel);
 
-        print("True 1");
-        // Điều hướng sang màn hình chính hoặc trang khác
-        Navigator.pushNamed(context, '/home');
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Login successful!")),
+          );
+
+          // Điều hướng sang màn hình chính hoặc trang khác
+          Navigator.pushNamed(context, '/home');
+        }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Failed to login. User is null!")),
         );
       }
     } catch(e) {
-      print("True");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Error: ${e.toString()}")),
       );
