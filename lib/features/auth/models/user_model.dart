@@ -1,4 +1,4 @@
-class User {
+class UserModel {
   final String userId;
   final String name;
   final String email;
@@ -7,7 +7,7 @@ class User {
   final int totalTime;
   final DateTime createdAt;
 
-  User({
+  UserModel({
     required this.userId,
     required this.name,
     required this.email,
@@ -17,8 +17,8 @@ class User {
     required this.createdAt,
   });
 
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
+  factory UserModel.fromJson(Map<String, dynamic> json) {
+    return UserModel(
       userId: json['userId'] as String,
       name: json['name'] as String,
       email: json['email'] as String,
