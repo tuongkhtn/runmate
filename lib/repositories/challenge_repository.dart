@@ -1,103 +1,102 @@
-import '../models/challenge.dart';
-import '../models/participant.dart';
-import 'base_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
+import '../models/user.dart';
+import '../models/participant.dart';
+import '../models/challenge.dart';
+import '../models/invitation.dart';
 
-class ChallengeRepository extends BaseRepository {
+abstract class BaseRepository {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  FirebaseFirestore get firestore => _firestore;
+}
+
+class UserRepository extends BaseRepository {
   final CollectionReference collection;
 
-  ChallengeRepository()
-      : collection = FirebaseFirestore.instance.collection('challenges');
+  UserRepository()
+      : collection = FirebaseFirestore.instance.collection('users');
 
-  Future<String> createChallenge(Challenge challenge) async {
-    final docRef = await collection.add(challenge.toJson());
-    return docRef.id;
-  }
-
-  Future<List<Challenge>> getChallengesByUserId({String? userId}) async {
-    Query query = collection;
-    if (userId != null) {
-      query = query.where('ownerId', isEqualTo: userId);
-    } else {
-      query = query.where('type', isEqualTo: 'public');
+  Future<User?> getUser(String userId) async {
+    try {
+      final doc = await collection.doc(userId).get();
+      if (!doc.exists) return null;
+      return User.fromJson(doc.data() as Map<String, dynamic>);
+    } catch (e) {
+      print('Error getting user: $e');
+      return null;
     }
-
-    final snapshot = await query.get();
-    return snapshot.docs
-        .map((doc) => Challenge.fromJson(doc.data() as Map<String, dynamic>))
-        .toList();
   }
 
-  Future<void> addParticipant(String challengeId, Participant participant) async {
-    await collection
-        .doc(challengeId)
-        .collection('participants')
-        .doc(participant.userId)
-        .set(participant.toJson());
+  Future<User> getUserByUserId(String userId) async {
+    try {
+      final doc = await collection.doc(userId).get();
+      if (!doc.exists) throw Exception('User not found');
+      return User.fromJson(doc.data() as Map<String, dynamic>);
+    } catch (e) {
+      throw Exception('Error getting user by userId: $e');
+    }
   }
 
-  Future<List<Participant>> getParticipantsByChallengeId(String challengeId) async {
-    final snapshot = await collection
-        .doc(challengeId)
-        .collection('participants')
-        .get();
-    return snapshot.docs
-        .map((doc) => Participant.fromJson(doc.data()))
-        .toList();
+  Future<bool> isUserExists(String userId) async {
+    try {
+      final doc = await collection.doc(userId).get();
+      return doc.exists;
+    } catch (e) {
+      print('Error checking if user exists: $e');
+      return false;
+    }
   }
 
-  Future<void> deleteChallenge(String challengeId) async {
-    await collection.doc(challengeId).delete();
+  Future<void> createUser(User user) async {
+    try {
+      await collection.doc(user.userId).set(user.toJson());
+    } catch (e) {
+      print('Error creating user: $e');
+    }
   }
 
-  Future<void> deleteParticipant(String challengeId, String userId) async {
-    await collection
-        .doc(challengeId)
-        .collection('participants')
-        .doc(userId)
-        .delete();
+  Future<User> updateUser(String userId, Map<String, dynamic> data) async {
+    try {
+      await collection.doc(userId).update(data);
+      return getUserByUserId(userId);
+    } catch (e) {
+      throw Exception('Error updating user: $e');
+    }
   }
 
-  Future<void> updateChallenge(String challengeId, Map<String, dynamic> data) async {
-    await collection.doc(challengeId).update(data);
+  Future<User> addTotalDistance(String userId, double distance) async {
+    try {
+      final user = await getUserByUserId(userId);
+      final totalDistance = user.totalDistance + distance;
+      return updateUser(userId, {'totalDistance': totalDistance});
+    } catch (e) {
+      throw Exception('Error adding total distance: $e');
+    }
   }
 
-  Future<void> updateParticipant(String challengeId, String userId, Map<String, dynamic> data) async {
-    await collection
-        .doc(challengeId)
-        .collection('participants')
-        .doc(userId)
-        .update(data);
+  Future<User> addTotalTime(String userId, int time) async {
+    try {
+      final user = await getUserByUserId(userId);
+      final totalTime = user.totalTime + time;
+      return updateUser(userId, {'totalTime': totalTime});
+    } catch (e) {
+      throw Exception('Error adding total time: $e');
+    }
   }
 
-  Future<Challenge> getChallengeById(String challengeId) async {
-    final doc = await collection.doc(challengeId).get();
-    return Challenge.fromJson(doc.data() as Map<String, dynamic>);
+  Future<User> updateAvatarUrl(String userId, String avatarUrl) async {
+    try {
+      return updateUser(userId, {'avatarUrl': avatarUrl});
+    } catch (e) {
+      throw Exception('Error updating avatar URL: $e');
+    }
   }
 
-  Future<List<Challenge>> getChallengesByType(String type) async {
-    final snapshot = await collection.where('type', isEqualTo: type).get();
-    return snapshot.docs
-        .map((doc) => Challenge.fromJson(doc.data() as Map<String, dynamic>))
-        .toList();
-  }
-
-  Future<List<Challenge>> getChallengesWhereNameContainingString(String name) async {
-    final snapshot = await collection.get();
-    return snapshot.docs
-        .where((doc) => (doc['name'] as String).contains(name))
-        .map((doc) => Challenge.fromJson(doc.data() as Map<String, dynamic>))
-        .toList();
-  }
-
-  Future<List<Challenge>> getChallengesFromDateTimeToDateTime(DateTime start, DateTime end) async {
-    final snapshot = await collection.get();
-    return snapshot.docs
-        .where((doc) {
-          final challenge = Challenge.fromJson(doc.data() as Map<String, dynamic>);
-          return challenge.startDate.isAfter(start) && challenge.endDate.isBefore(end);
-        })
-        .map((doc) => Challenge.fromJson(doc.data() as Map<String, dynamic>))
-        .toList();
+  Future<void> deleteUser(String userId) async {
+    try {
+      await collection.doc(userId).delete();
+    } catch (e) {
+      print('Error deleting user: $e');
+    }
   }
 }
