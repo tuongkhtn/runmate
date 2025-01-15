@@ -6,6 +6,8 @@ import "features/auth/screens/login_screen.dart";
 import "features/auth/screens/register_screen.dart";
 import "features/profile/screens/profile_screen.dart";
 import "common/providers/user_provider.dart";
+import "features/let_run/screens/run_screen.dart";
+import "features/challenge/screens/challenge_screen.dart";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,6 +33,7 @@ class MyApp extends StatelessWidget {
           '/register': (context) => const RegisterScreen(),
           '/home': (context) => const ProfileScreen(),
           '/let_run': (context) => const RunScreen(),
+          '/challenge': (context) => const ChallengeScreen(),
       },
         initialRoute: '/let_run',
       ),
