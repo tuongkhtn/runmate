@@ -1,7 +1,6 @@
 import "dart:io";
 
 import "package:cloud_firestore/cloud_firestore.dart";
-import "package:firebase_auth/firebase_auth.dart";
 import 'package:flutter/material.dart';
 import "package:firebase_core/firebase_core.dart";
 import "package:provider/provider.dart";
@@ -12,6 +11,7 @@ import "features/auth/screens/login_screen.dart";
 import "features/auth/screens/register_screen.dart";
 import "features/profile/screens/profile_screen.dart";
 import "common/providers/user_provider.dart";
+import "features/test_screen.dart";
 
 const bool USE_EMULATOR = false;
 
@@ -56,8 +56,9 @@ class MyApp extends StatelessWidget {
           '/register': (context) => const RegisterScreen(),
           '/home': (context) => const ProfileScreen(),
           '/let_run': (context) => const RunScreen(),
+          '/test': (context) => const UserFormScreen(),
       },
-        initialRoute: '/',
+        initialRoute: '/test',
       ),
     );
   }
