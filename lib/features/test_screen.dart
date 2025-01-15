@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:runmate/repositories/challenge_repository.dart';
+import 'package:runmate/repositories/user_repository.dart';
 
 import '../models/user.dart';
 

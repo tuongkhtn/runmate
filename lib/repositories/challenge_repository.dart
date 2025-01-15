@@ -1,102 +1,172 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
-import '../models/user.dart';
-import '../models/participant.dart';
 import '../models/challenge.dart';
-import '../models/invitation.dart';
+import 'base_repository.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-abstract class BaseRepository {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  FirebaseFirestore get firestore => _firestore;
-}
-
-class UserRepository extends BaseRepository {
+class ChallengeRepository extends BaseRepository {
   final CollectionReference collection;
 
-  UserRepository()
-      : collection = FirebaseFirestore.instance.collection('users');
+  ChallengeRepository()
+      : collection = FirebaseFirestore.instance.collection('challenges');
 
-  Future<User?> getUser(String userId) async {
+  ChallengeRepository.withMockFirestore(FirebaseFirestore firestore)
+      : collection = firestore.collection('challenges'),
+        super.withMockFirestore(firestore);
+
+  Future<Challenge> createChallenge(Challenge challenge) async {
     try {
-      final doc = await collection.doc(userId).get();
-      if (!doc.exists) return null;
-      return User.fromJson(doc.data() as Map<String, dynamic>);
+      if (challenge.startDate.isAfter(challenge.endDate)) {
+        throw Exception('Start date must be before end date');
+      }
+
+      final docRef = await collection.add(challenge.toJson());
+      Challenge createdChallenge = await getChallengeById(docRef.id);
+      createdChallenge.id = docRef.id;
+
+      return createdChallenge;
     } catch (e) {
-      print('Error getting user: $e');
-      return null;
+      throw Exception('Error creating challenge: $e');
     }
   }
 
-  Future<User> getUserByUserId(String userId) async {
+  Future<List<Challenge>> getChallengesByOwnerId({String? ownerId}) async {
     try {
-      final doc = await collection.doc(userId).get();
-      if (!doc.exists) throw Exception('User not found');
-      return User.fromJson(doc.data() as Map<String, dynamic>);
+      if (ownerId == null) throw Exception('User ID is required');
+      final snapshot = await collection.where('ownerId', isEqualTo: ownerId).get();
+      return snapshot.docs.map((doc) {
+        Challenge challenge = Challenge.fromJson(doc.data() as Map<String, dynamic>);
+        challenge.id = doc.id;
+        return challenge;
+      }).toList();
     } catch (e) {
-      throw Exception('Error getting user by userId: $e');
+      throw Exception('Error getting challenges by owner ID: $e');
     }
   }
 
-  Future<bool> isUserExists(String userId) async {
+  Future<Challenge> getChallengeById(String challengeId) async {
     try {
-      final doc = await collection.doc(userId).get();
-      return doc.exists;
+      final doc = await collection.doc(challengeId).get();
+      if (!doc.exists) throw Exception('Challenge not found');
+      Challenge challenge = Challenge.fromJson(doc.data() as Map<String, dynamic>);
+      challenge.id = doc.id;
+      return challenge;
     } catch (e) {
-      print('Error checking if user exists: $e');
-      return false;
+      throw Exception('Error getting challenge by ID: $e');
     }
   }
 
-  Future<void> createUser(User user) async {
+  Future<void> deleteChallenge(String challengeId) async {
     try {
-      await collection.doc(user.userId).set(user.toJson());
+      await collection.doc(challengeId).delete();
     } catch (e) {
-      print('Error creating user: $e');
+      throw Exception('Error deleting challenge: $e');
     }
   }
 
-  Future<User> updateUser(String userId, Map<String, dynamic> data) async {
+  Future<Challenge> updateChallenge(String challengeId, Map<String, dynamic> data) async {
     try {
-      await collection.doc(userId).update(data);
-      return getUserByUserId(userId);
+      await collection.doc(challengeId).update(data);
+      return getChallengeById(challengeId);
     } catch (e) {
-      throw Exception('Error updating user: $e');
+      throw Exception('Error updating challenge: $e');
     }
   }
 
-  Future<User> addTotalDistance(String userId, double distance) async {
+  Future<Challenge> updateDescription(String challengeId, String description) async {
     try {
-      final user = await getUserByUserId(userId);
-      final totalDistance = user.totalDistance + distance;
-      return updateUser(userId, {'totalDistance': totalDistance});
+      await collection.doc(challengeId).update({'description': description});
+      return getChallengeById(challengeId);
     } catch (e) {
-      throw Exception('Error adding total distance: $e');
+      throw Exception('Error updating challenge description: $e');
     }
   }
 
-  Future<User> addTotalTime(String userId, int time) async {
+  Future<Challenge> updateLongDescription(String challengeId, String longDescription) async {
     try {
-      final user = await getUserByUserId(userId);
-      final totalTime = user.totalTime + time;
-      return updateUser(userId, {'totalTime': totalTime});
+      await collection.doc(challengeId).update({'longDescription': longDescription});
+      return getChallengeById(challengeId);
     } catch (e) {
-      throw Exception('Error adding total time: $e');
+      throw Exception('Error updating challenge long description: $e');
     }
   }
 
-  Future<User> updateAvatarUrl(String userId, String avatarUrl) async {
+  Future<Challenge> updateGoalDistance(String challengeId, double goalDistance) async {
     try {
-      return updateUser(userId, {'avatarUrl': avatarUrl});
+      await collection.doc(challengeId).update({'goalDistance': goalDistance});
+      return getChallengeById(challengeId);
     } catch (e) {
-      throw Exception('Error updating avatar URL: $e');
+      throw Exception('Error updating challenge goal distance: $e');
     }
   }
 
-  Future<void> deleteUser(String userId) async {
+  Future<Challenge> updateTotalNumberOfParticipants(String challengeId, int totalNumberOfParticipants) async {
     try {
-      await collection.doc(userId).delete();
+      await collection.doc(challengeId).update({'totalNumberOfParticipants': totalNumberOfParticipants});
+      return getChallengeById(challengeId);
     } catch (e) {
-      print('Error deleting user: $e');
+      throw Exception('Error updating challenge total number of participants: $e');
+    }
+  }
+
+  Future<Challenge> addTotalNumberOfParticipants(String challengeId, int addedPeople) async {
+    try {
+      final challenge = await getChallengeById(challengeId);
+      final newTotalNumberOfParticipants = challenge.totalNumberOfParticipants + addedPeople;
+      return updateTotalNumberOfParticipants(challengeId, newTotalNumberOfParticipants);
+    } catch (e) {
+      throw Exception('Error adding total number of participants: $e');
+    }
+  }
+
+  Future<Challenge> updateStartDate(String challengeId, DateTime startDate) async {
+    try {
+      await collection.doc(challengeId).update({'startDate': startDate.toIso8601String()});
+      return getChallengeById(challengeId);
+    } catch (e) {
+      throw Exception('Error updating challenge start date: $e');
+    }
+  }
+
+  Future<Challenge> updateEndDate(String challengeId, DateTime endDate) async {
+    try {
+      await collection.doc(challengeId).update({'endDate': endDate.toIso8601String()});
+      return getChallengeById(challengeId);
+    } catch (e) {
+      throw Exception('Error updating challenge end date: $e');
+    }
+  }
+
+  Future<List<Challenge>> getChallengesWhereNameContainingString(String name) async {
+    try {
+      final snapshot = await collection.get();
+      return snapshot.docs
+          .where((doc) => (doc['name'] as String).contains(name))
+          .map((doc) {
+            Challenge challenge = Challenge.fromJson(doc.data() as Map<String, dynamic>);
+            challenge.id = doc.id;
+            return challenge;
+          })
+          .toList();
+    } catch (e) {
+      throw Exception('Error getting challenges where name contains string: $e');
+    }
+  }
+
+  Future<List<Challenge>> getChallengesFromDateTimeToDateTime(DateTime start, DateTime end) async {
+    try {
+      final snapshot = await collection.get();
+      return snapshot.docs
+          .where((doc) {
+            final challenge = Challenge.fromJson(doc.data() as Map<String, dynamic>);
+            return challenge.startDate.isAfter(start) && challenge.endDate.isBefore(end);
+          })
+          .map((doc) {
+            Challenge challenge = Challenge.fromJson(doc.data() as Map<String, dynamic>);
+            challenge.id = doc.id;
+            return challenge;
+          })
+          .toList();
+    } catch (e) {
+      throw Exception('Error getting challenges from DateTime to DateTime: $e');
     }
   }
 }
