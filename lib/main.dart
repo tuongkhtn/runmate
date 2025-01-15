@@ -36,8 +36,6 @@ Future<void> _connectToEmulator() async {
     sslEnabled: false,
     persistenceEnabled: false,
   );
-
-  await FirebaseAuth.instance.useEmulator('http://$localhost:9099');
 }
 
 class MyApp extends StatelessWidget {
