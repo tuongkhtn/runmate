@@ -16,7 +16,11 @@ class UserRepository extends BaseRepository {
     try {
       final querySnapshot = await collection.get();
       return querySnapshot.docs
-          .map((doc) => User.fromJson(doc.data() as Map<String, dynamic>))
+          .map((doc) {
+        final user = User.fromJson(doc.data() as Map<String, dynamic>);
+        user.id = doc.id;
+        return user;
+      })
           .toList();
     } catch (e) {
       throw Exception('Error getting all users: $e');
@@ -28,7 +32,10 @@ class UserRepository extends BaseRepository {
       if (userId == null) throw Exception('User ID is required');
       final doc = await collection.doc(userId).get();
       if (!doc.exists) throw Exception('User not found');
-      return User.fromJson(doc.data() as Map<String, dynamic>);
+
+      final user = User.fromJson(doc.data() as Map<String, dynamic>);
+      user.id = doc.id;
+      return user;
     } catch (e) {
       throw Exception('Error getting user by userId: $e');
     }
