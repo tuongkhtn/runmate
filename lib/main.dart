@@ -11,8 +11,9 @@ import "features/auth/screens/login_screen.dart";
 import "features/auth/screens/register_screen.dart";
 import "features/profile/screens/profile_screen.dart";
 import "common/providers/user_provider.dart";
+import "features/test_screen.dart";
 
-const bool USE_EMULATOR = true;
+const bool USE_EMULATOR = false;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -55,8 +56,9 @@ class MyApp extends StatelessWidget {
           '/register': (context) => const RegisterScreen(),
           '/home': (context) => const ProfileScreen(),
           '/let_run': (context) => const RunScreen(),
+          '/test': (context) => const UserFormScreen(),
       },
-        initialRoute: '/',
+        initialRoute: '/test',
       ),
     );
   }
