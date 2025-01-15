@@ -1,3 +1,5 @@
+import '../enums/challenge_status_enum.dart';
+import '../enums/challenge_type_enum.dart';
 import '../models/challenge.dart';
 import 'base_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -54,6 +56,80 @@ class ChallengeRepository extends BaseRepository {
     }
   }
 
+  Future<List<Challenge>> getAllChallenges() async {
+    try {
+      final snapshot = await collection.get();
+      return snapshot.docs.map((doc) {
+        Challenge challenge = Challenge.fromJson(doc.data() as Map<String, dynamic>);
+        challenge.id = doc.id;
+        return challenge;
+      }).toList();
+    } catch (e) {
+      throw Exception('Error getting all challenges: $e');
+    }
+  }
+
+  Future<List<Challenge>> getChallengesByStatus(ChallengeStatusEnum status) async {
+    try {
+      final snapshot = await collection.where('status', isEqualTo: status.toString().split('.').last).get();
+      return snapshot.docs.map((doc) {
+        Challenge challenge = Challenge.fromJson(doc.data() as Map<String, dynamic>);
+        challenge.id = doc.id;
+        return challenge;
+      }).toList();
+    } catch (e) {
+      throw Exception('Error getting challenges by status: $e');
+    }
+  }
+
+  Future<List<Challenge>> getChallengesWhereNameContainingString(String name) async {
+    try {
+      final snapshot = await collection.get();
+      return snapshot.docs
+          .where((doc) => (doc['name'] as String).contains(name))
+          .map((doc) {
+            Challenge challenge = Challenge.fromJson(doc.data() as Map<String, dynamic>);
+            challenge.id = doc.id;
+            return challenge;
+          })
+          .toList();
+    } catch (e) {
+      throw Exception('Error getting challenges where name contains string: $e');
+    }
+  }
+
+  Future<List<Challenge>> getChallengesFromDateTimeToDateTime(DateTime start, DateTime end) async {
+    try {
+      final snapshot = await collection.get();
+      return snapshot.docs
+          .where((doc) {
+            final challenge = Challenge.fromJson(doc.data() as Map<String, dynamic>);
+            return challenge.startDate.isAfter(start) && challenge.endDate.isBefore(end);
+          })
+          .map((doc) {
+            Challenge challenge = Challenge.fromJson(doc.data() as Map<String, dynamic>);
+            challenge.id = doc.id;
+            return challenge;
+          })
+          .toList();
+    } catch (e) {
+      throw Exception('Error getting challenges from DateTime to DateTime: $e');
+    }
+  }
+
+  Future<List<Challenge>> getChallengesByType(ChallengeTypeEnum type) async {
+    try {
+      final snapshot = await collection.where('type', isEqualTo: type.toString().split('.').last).get();
+      return snapshot.docs.map((doc) {
+        Challenge challenge = Challenge.fromJson(doc.data() as Map<String, dynamic>);
+        challenge.id = doc.id;
+        return challenge;
+      }).toList();
+    } catch (e) {
+      throw Exception('Error getting challenges by type: $e');
+    }
+  }
+
   Future<void> deleteChallenge(String challengeId) async {
     try {
       await collection.doc(challengeId).delete();
@@ -107,10 +183,16 @@ class ChallengeRepository extends BaseRepository {
     }
   }
 
-  Future<Challenge> addTotalNumberOfParticipants(String challengeId, int addedPeople) async {
+  Future<Challenge> addTotalNumberOfParticipants(String? challengeId, int addedPeople) async {
     try {
+      if (challengeId == null) throw Exception('Challenge ID is required');
+
       final challenge = await getChallengeById(challengeId);
       final newTotalNumberOfParticipants = challenge.totalNumberOfParticipants + addedPeople;
+
+      if (newTotalNumberOfParticipants < 0) {
+        throw Exception('Total number of participants cannot be negative');
+      }
       return updateTotalNumberOfParticipants(challengeId, newTotalNumberOfParticipants);
     } catch (e) {
       throw Exception('Error adding total number of participants: $e');
@@ -135,38 +217,24 @@ class ChallengeRepository extends BaseRepository {
     }
   }
 
-  Future<List<Challenge>> getChallengesWhereNameContainingString(String name) async {
+  Future<Challenge> updateStatus(String challengeId, ChallengeStatusEnum status) async {
     try {
-      final snapshot = await collection.get();
-      return snapshot.docs
-          .where((doc) => (doc['name'] as String).contains(name))
-          .map((doc) {
-            Challenge challenge = Challenge.fromJson(doc.data() as Map<String, dynamic>);
-            challenge.id = doc.id;
-            return challenge;
-          })
-          .toList();
+      await collection.doc(challengeId).update({'status': status.toString().split('.').last});
+      return getChallengeById(challengeId);
     } catch (e) {
-      throw Exception('Error getting challenges where name contains string: $e');
+      throw Exception('Error updating challenge status: $e');
     }
   }
 
-  Future<List<Challenge>> getChallengesFromDateTimeToDateTime(DateTime start, DateTime end) async {
+  Future<Challenge> updateType(String challengeId, ChallengeTypeEnum type) async {
     try {
-      final snapshot = await collection.get();
-      return snapshot.docs
-          .where((doc) {
-            final challenge = Challenge.fromJson(doc.data() as Map<String, dynamic>);
-            return challenge.startDate.isAfter(start) && challenge.endDate.isBefore(end);
-          })
-          .map((doc) {
-            Challenge challenge = Challenge.fromJson(doc.data() as Map<String, dynamic>);
-            challenge.id = doc.id;
-            return challenge;
-          })
-          .toList();
+      await collection.doc(challengeId).update({'type': type
+          .toString()
+          .split('.')
+          .last});
+      return getChallengeById(challengeId);
     } catch (e) {
-      throw Exception('Error getting challenges from DateTime to DateTime: $e');
+      throw Exception('Error updating challenge type: $e');
     }
   }
 }
