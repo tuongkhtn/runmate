@@ -1,11 +1,15 @@
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 import "package:provider/provider.dart";
-import "package:runmate/features/profile/services/profile_service.dart";
-import "../../auth/services/auth_service.dart";
 import "../../auth/models/user_model.dart";
 import "../../../common/utils/constants.dart";
 import "../../../common/providers/user_provider.dart";
+import "../widgets/editable_text_field.dart";
+import "dart:io";
+import "package:image_picker/image_picker.dart";
+import "../../auth/services/user_service.dart";
+import "../../../common/widgets/custom_elevated_button.dart";
+import "../widgets/avatar_widget.dart";
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -17,8 +21,10 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
-  final ProfileService _profileService = ProfileService();
-  final AuthService _authService = AuthService();
+  final FocusNode _focusNode = FocusNode();
+  File? _avatar;
+
+  final UserService _userService = UserService();
 
   UserModel? _currentUser;
   bool _isLoading = false;
@@ -43,7 +49,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  Future<void> _updateProfile() async {
+  void _toggleEditing(bool editing) {
+    setState(() {
+      _isEditing = editing;
+      if(_isEditing) {
+        _focusNode.requestFocus();
+      } else {
+        _focusNode.unfocus();
+      }
+    });
+  }
+
+  Future<void> _pickAvatar() async {
+    final picker = ImagePicker();
+    final pickedImage = await picker.pickImage(source: ImageSource.gallery);
+
+    if(pickedImage != null) {
+      setState(() {
+        _avatar = File(pickedImage.path);
+      });
+    }
+  }
+
+  Future<void> _saveProfile() async {
     if(!_formKey.currentState!.validate()) {
       return;
     }
@@ -57,12 +85,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
       final user = userProvider.user;
 
       if(user != null) {
-        await _profileService.updateProfile(
-          userId: _currentUser!.userId,
+        await _userService.updateUser(
+          userId: user.userId,
           name: _nameController.text.trim(),
         );
 
-        userProvider.setUser(user.copyWith(name: _nameController.text.trim()));
+        userProvider.setUser(
+          user.copyWith(
+            name: _nameController.text.trim(),
+          )
+        );
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Profile updated successfully!")),
@@ -70,12 +102,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }
     } catch(e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error: ${e.toString()}"))
+        SnackBar(content: Text("Error updating profile: $e")),
       );
     } finally {
       setState(() {
         _isLoading = false;
       });
+    }
+  }
+
+  Future<void> _logout() async {
+    try {
+      Provider.of<UserProvider>(context, listen: false).clearUser();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Logged out successfully!")),
+      );
+      Navigator.pushReplacementNamed(context, "/login");
+    } catch(e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error during logout: $e")),
+      );
     }
   }
 
@@ -86,7 +132,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         width: double.infinity,
         color: kSecondaryColor,
         child: Padding(
-          padding: EdgeInsets.all(20.0),
+          padding: const EdgeInsets.only(top: 40.0, left: 20.0, right: 20.0, bottom: 20.0),
           child: Column(
             children: [
               const Text(
@@ -100,41 +146,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
               const SizedBox(height: 20,),
 
+              AvatarWidget(
+                avatarFile: _avatar,
+                onPickAvatar: _pickAvatar,
+              ),
+
+              const SizedBox(height: 40),
+
               Form(
                 key: _formKey,
                 child: Column(
                   children: [
-                    TextFormField(
+                    EditableTextField(
                       controller: _nameController,
-                      style: const TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
-                        labelText: 'Name',
-                        labelStyle: const TextStyle(color: Colors.white),
-                        prefixIcon: const Icon(Icons.person, color: Colors.white),
-                        filled: true,
-                        fillColor: Colors.white.withOpacity(0.1),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.white),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.white),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      enabled: _isEditing,
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Name is required';
-                        }
-                        return null;
-                      },
+                      focusNode: _focusNode,
+                      isEditing: _isEditing,
+                      onEditToggle: _toggleEditing,
+                      label: 'Name',
+                      prefixIcon: const Icon(Icons.person, color: Colors.white),
                     ),
 
                     const SizedBox(height: 30,),
-
                   ],
-                )
+                ),
+              ),
+
+              const Spacer(),
+
+              // Logout Button
+              SizedBox(
+                width: double.infinity,
+                child: CustomElevatedButton(
+                  onPressed: _logout,
+                  text: "Log Out",
+                  isLoading: false,
+                ),
               )
             ],
           )
