@@ -1,8 +1,14 @@
 // Import required packages
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 
 abstract class BaseRepository {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  late FirebaseFirestore _firestore;
+
+  BaseRepository() {
+    _firestore = FirebaseFirestore.instance;
+  }
+
+  BaseRepository.withMockFirestore(this._firestore);
+
   FirebaseFirestore get firestore => _firestore;
 }

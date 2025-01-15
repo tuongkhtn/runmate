@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/user.dart';
-import '../models/participant.dart';
 import 'base_repository.dart';
 
 class UserRepository extends BaseRepository {
@@ -9,19 +8,24 @@ class UserRepository extends BaseRepository {
 
   UserRepository() : collection = FirebaseFirestore.instance.collection('users');
 
-  Future<User?> getUser(String userId) async {
+  UserRepository.withMockFirestore(FirebaseFirestore firestore)
+      : collection = firestore.collection('users'),
+        super.withMockFirestore(firestore);
+
+  Future<List<User>> getAllUsers() async {
     try {
-      final doc = await collection.doc(userId).get();
-      if (!doc.exists) return null;
-      return User.fromJson(doc.data() as Map<String, dynamic>);
+      final querySnapshot = await collection.get();
+      return querySnapshot.docs
+          .map((doc) => User.fromJson(doc.data() as Map<String, dynamic>))
+          .toList();
     } catch (e) {
-      print('Error getting user: $e');
-      return null;
+      throw Exception('Error getting all users: $e');
     }
   }
 
-  Future<User> getUserByUserId(String userId) async {
+  Future<User> getUserById(String? userId) async {
     try {
+      if (userId == null) throw Exception('User ID is required');
       final doc = await collection.doc(userId).get();
       if (!doc.exists) throw Exception('User not found');
       return User.fromJson(doc.data() as Map<String, dynamic>);
@@ -30,8 +34,9 @@ class UserRepository extends BaseRepository {
     }
   }
 
-  Future<bool> isUserExists(String userId) async {
+  Future<bool> isUserExists(String? userId) async {
     try {
+      if (userId == null) throw Exception('User ID is required');
       final doc = await collection.doc(userId).get();
       return doc.exists;
     } catch (e) {
@@ -40,26 +45,32 @@ class UserRepository extends BaseRepository {
     }
   }
 
-  Future<void> createUser(User user) async {
-    try {
-      await collection.doc(user.userId).set(user.toJson());
-    } catch (e) {
-      print('Error creating user: $e');
-    }
+Future<User> createUser(User user) async {
+  try {
+    final docRef = await collection.add(user.toJson());
+    User createdUser = await getUserById(docRef.id);
+    createdUser.id = docRef.id;
+    return createdUser;
+  } catch (e) {
+    print('Error creating user: $e');
+    throw Exception('Error creating user');
   }
+}
 
-  Future<User> updateUser(String userId, Map<String, dynamic> data) async {
+  Future<User> updateUser(String? userId, Map<String, dynamic> data) async {
     try {
+      if (userId == null) throw Exception('User ID is required');
       await collection.doc(userId).update(data);
-      return getUserByUserId(userId);
+      return getUserById(userId);
     } catch (e) {
       throw Exception('Error updating user: $e');
     }
   }
 
-  Future<User> addTotalDistance(String userId, double distance) async {
+  Future<User> addTotalDistance(String? userId, double distance) async {
     try {
-      final user = await getUserByUserId(userId);
+      if (userId == null) throw Exception('User ID is required');
+      final user = await getUserById(userId);
       final totalDistance = user.totalDistance + distance;
       return updateUser(userId, {'totalDistance': totalDistance});
     } catch (e) {
@@ -67,9 +78,10 @@ class UserRepository extends BaseRepository {
     }
   }
 
-  Future<User> addTotalTime(String userId, int time) async {
+  Future<User> addTotalTime(String? userId, int time) async {
     try {
-      final user = await getUserByUserId(userId);
+      if (userId == null) throw Exception('User ID is required');
+      final user = await getUserById(userId);
       final totalTime = user.totalTime + time;
       return updateUser(userId, {'totalTime': totalTime});
     } catch (e) {
@@ -77,7 +89,7 @@ class UserRepository extends BaseRepository {
     }
   }
 
-  Future<User> updateAvatarUrl(String userId, String avatarUrl) async {
+  Future<User> updateAvatarUrl(String? userId, String avatarUrl) async {
     try {
       return updateUser(userId, {'avatarUrl': avatarUrl});
     } catch (e) {
@@ -85,66 +97,39 @@ class UserRepository extends BaseRepository {
     }
   }
 
-  Future<void> deleteUser(String userId) async {
+  Future<User> updatePhoneNumber(String? userId, String phoneNumber) async {
     try {
+      return updateUser(userId, {'phoneNumber': phoneNumber});
+    } catch (e) {
+      throw Exception('Error updating phone number: $e');
+    }
+  }
+
+  Future<User> updateAddress(String? userId, String address) async {
+    try {
+      return updateUser(userId, {'address': address});
+    } catch (e) {
+      throw Exception('Error updating address: $e');
+    }
+  }
+
+  Future<User> updateDateOfBirth(String? userId, DateTime dateOfBirth) async {
+    try {
+      return updateUser(userId, {'dateOfBirth': dateOfBirth.toIso8601String()});
+    } catch (e) {
+      throw Exception('Error updating date of birth: $e');
+    }
+  }
+
+  Future<bool> deleteUser(String? userId) async {
+    try {
+      if (userId == null) throw Exception('User ID is required');
       await collection.doc(userId).delete();
+      return true;
     } catch (e) {
       print('Error deleting user: $e');
-    }
-  }
-}
-
-class ParticipantRepository extends BaseRepository {
-  final CollectionReference _participantCollection =
-  FirebaseFirestore.instance.collection('participants');
-
-  Future<void> addParticipant(Participant participant) async {
-    try {
-      await _participantCollection.add(participant.toJson());
-    } catch (e) {
-      rethrow;
+      return false;
     }
   }
 
-  Future<Participant?> getParticipantById(String participantId) async {
-    try {
-      final docSnapshot = await _participantCollection.doc(participantId).get();
-      if (docSnapshot.exists) {
-        return Participant.fromJson(docSnapshot.data() as Map<String, dynamic>);
-      }
-      return null;
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future<List<Participant>> getAllParticipants() async {
-    try {
-      final querySnapshot = await _participantCollection.get();
-      return querySnapshot.docs
-          .map((doc) =>
-          Participant.fromJson(doc.data() as Map<String, dynamic>))
-          .toList();
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future<void> updateParticipant(String participantId, Participant participant) async {
-    try {
-      await _participantCollection
-          .doc(participantId)
-          .update(participant.toJson());
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future<void> deleteParticipant(String participantId) async {
-    try {
-      await _participantCollection.doc(participantId).delete();
-    } catch (e) {
-      rethrow;
-    }
-  }
 }
