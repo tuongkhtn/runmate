@@ -47,8 +47,7 @@ class UserRepository extends BaseRepository {
       final doc = await collection.doc(userId).get();
       return doc.exists;
     } catch (e) {
-      print('Error checking if user exists: $e');
-      return false;
+    throw Exception('Error checking if user exists: $e');
     }
   }
 
@@ -128,15 +127,12 @@ Future<User> createUser(User user) async {
     }
   }
 
-  Future<bool> deleteUser(String? userId) async {
+  Future<void> deleteUser(String? userId) async {
     try {
       if (userId == null) throw Exception('User ID is required');
       await collection.doc(userId).delete();
-      return true;
     } catch (e) {
-      print('Error deleting user: $e');
-      return false;
+      throw Exception('Error deleting user: $e');
     }
   }
-
 }

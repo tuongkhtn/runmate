@@ -16,7 +16,8 @@ void main() {
       usersCollection = fakeFirestore.collection('users');
     });
 
-    test('createUser adds a user to Firestore and returns the created user', () async {
+    test('createUser adds a user to Firestore and returns the created user',
+        () async {
       final user = User(
         name: 'John Doe',
         email: 'john@example.com',
@@ -65,9 +66,27 @@ void main() {
       expect(users.length, 3);
 
       // Verify each user's data is present
-      expect(users.any((u) => u.name == 'John Doe' && u.email == 'john@example.com' && u.totalDistance == 100.0 && u.totalTime == 60), isTrue);
-      expect(users.any((u) => u.name == 'Jane Smith' && u.email == 'jane@example.com' && u.totalDistance == 150.0 && u.totalTime == 90), isTrue);
-      expect(users.any((u) => u.name == 'Bob Johnson' && u.email == 'bob@example.com' && u.totalDistance == 75.0 && u.totalTime == 45), isTrue);
+      expect(
+          users.any((u) =>
+              u.name == 'John Doe' &&
+              u.email == 'john@example.com' &&
+              u.totalDistance == 100.0 &&
+              u.totalTime == 60),
+          isTrue);
+      expect(
+          users.any((u) =>
+              u.name == 'Jane Smith' &&
+              u.email == 'jane@example.com' &&
+              u.totalDistance == 150.0 &&
+              u.totalTime == 90),
+          isTrue);
+      expect(
+          users.any((u) =>
+              u.name == 'Bob Johnson' &&
+              u.email == 'bob@example.com' &&
+              u.totalDistance == 75.0 &&
+              u.totalTime == 45),
+          isTrue);
     });
 
     test('getUserById returns a User object if the document exists', () async {
@@ -86,11 +105,12 @@ void main() {
       expect(searchedUser.email, 'jane@example.com');
     });
 
-    test('getUserById throws an exception if the document does not exist', () async {
+    test('getUserById throws an exception if the document does not exist',
+        () async {
       const userId = 'non_existing_user';
 
       expect(
-            () async => await userRepository.getUserById(userId),
+        () async => await userRepository.getUserById(userId),
         throwsException,
       );
     });
@@ -104,7 +124,8 @@ void main() {
       final createdUser = await userRepository.createUser(user);
 
       final updatedData = {'totalDistance': 100.0};
-      final updatedUser = await userRepository.updateUser(createdUser.id, updatedData);
+      final updatedUser =
+          await userRepository.updateUser(createdUser.id, updatedData);
 
       final doc = await usersCollection.doc(createdUser.id).get();
       expect((doc.data() as Map<String, dynamic>)['totalDistance'], 100.0);
@@ -119,10 +140,9 @@ void main() {
 
       final createdUser = await userRepository.createUser(user);
 
-      final result = await userRepository.deleteUser(createdUser.id);
+      await userRepository.deleteUser(createdUser.id);
       final doc = await usersCollection.doc(createdUser.id).get();
 
-      expect(result, true);
       expect(doc.exists, false);
     });
 
@@ -138,7 +158,8 @@ void main() {
       expect(exists, true);
     });
 
-    test('isUserExists returns false if user does not exist in Firestore', () async {
+    test('isUserExists returns false if user does not exist in Firestore',
+        () async {
       final userId = 'non_existing_user';
 
       final exists = await userRepository.isUserExists(userId);
@@ -154,7 +175,8 @@ void main() {
 
       final createdUser = await userRepository.createUser(user);
 
-      final updatedUser = await userRepository.addTotalDistance(createdUser.id, 25.0);
+      final updatedUser =
+          await userRepository.addTotalDistance(createdUser.id, 25.0);
 
       expect(updatedUser.totalDistance, 75.0);
     });
@@ -181,7 +203,8 @@ void main() {
 
       final createdUser = await userRepository.createUser(user);
 
-      final updatedUser = await userRepository.updateAvatarUrl(createdUser.id, 'new_url');
+      final updatedUser =
+          await userRepository.updateAvatarUrl(createdUser.id, 'new_url');
 
       expect(updatedUser.avatarUrl, 'new_url');
     });
@@ -194,12 +217,14 @@ void main() {
 
       final createdUser = await userRepository.createUser(user);
 
-      final updatedUser = await userRepository.updatePhoneNumber(createdUser.id, '+1234567890');
+      final updatedUser =
+          await userRepository.updatePhoneNumber(createdUser.id, '+1234567890');
 
       expect(updatedUser.phoneNumber, '+1234567890');
 
       final doc = await usersCollection.doc(createdUser.id).get();
-      expect((doc.data() as Map<String, dynamic>)['phoneNumber'], '+1234567890');
+      expect(
+          (doc.data() as Map<String, dynamic>)['phoneNumber'], '+1234567890');
     });
 
     test('updateAddress updates the address of a user', () async {
@@ -210,7 +235,8 @@ void main() {
 
       final createdUser = await userRepository.createUser(user);
 
-      final updatedUser = await userRepository.updateAddress(createdUser.id, '123 Main St');
+      final updatedUser =
+          await userRepository.updateAddress(createdUser.id, '123 Main St');
 
       expect(updatedUser.address, '123 Main St');
 
@@ -227,12 +253,15 @@ void main() {
       final createdUser = await userRepository.createUser(user);
 
       final newDateOfBirth = DateTime(1990, 1, 1);
-      final updatedUser = await userRepository.updateDateOfBirth(createdUser.id, newDateOfBirth);
+      final updatedUser = await userRepository.updateDateOfBirth(
+          createdUser.id, newDateOfBirth);
 
       expect(updatedUser.dateOfBirth, newDateOfBirth);
 
       final doc = await usersCollection.doc(createdUser.id).get();
-      expect(DateTime.parse((doc.data() as Map<String, dynamic>)['dateOfBirth']), newDateOfBirth);
+      expect(
+          DateTime.parse((doc.data() as Map<String, dynamic>)['dateOfBirth']),
+          newDateOfBirth);
     });
   });
 }
