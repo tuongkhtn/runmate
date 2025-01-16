@@ -1,23 +1,21 @@
 class Participant {
-  final String? participantId;
+  String? id;
   final String userId;
-  final String status;
+  final String? challengeId;
   final double totalDistance;
   final DateTime createdAt;
 
   Participant({
-    this.participantId,
     required this.userId,
-    required this.status,
+    this.challengeId,
     required this.totalDistance,
     DateTime? createdAt ,
   }) : createdAt = createdAt ?? DateTime.now();
 
   factory Participant.fromJson(Map<String, dynamic> json) {
     return Participant(
-      participantId: json['participantId'] as String,
       userId: json['userId'] as String,
-      status: json['status'] as String,
+      challengeId: json['challengeId'] as String,
       totalDistance: (json['totalDistance'] as num).toDouble(),
       createdAt: DateTime.parse(json['createdAt'] as String),
     );
@@ -25,9 +23,8 @@ class Participant {
 
   Map<String, dynamic> toJson() {
     return {
-      'participantId': participantId,
       'userId': userId,
-      'status': status,
+      'challengeId': challengeId,
       'totalDistance': totalDistance,
       'createdAt': createdAt.toIso8601String(),
     };

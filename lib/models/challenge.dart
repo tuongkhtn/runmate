@@ -12,7 +12,7 @@ class Challenge {
   final double goalDistance;
   final ChallengeStatusEnum status;
   final ChallengeTypeEnum type;
-  final int totalNumberOfParticipants;
+  int totalNumberOfParticipants;
   final DateTime createdAt;
 
   Challenge({
