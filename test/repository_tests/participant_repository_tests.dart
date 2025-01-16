@@ -265,5 +265,209 @@ void main() {
       final doc = await participantsCollection.doc(participant.id).get();
       expect(doc.exists, false);
     });
+
+    test('getChallengesByTypeAndUserId returns correct challenges', () async {
+      // Setup test challenges
+      final challenge1 = Challenge(
+        ownerId: 'owner1',
+        name: 'Private Challenge 1',
+        goalDistance: 100.0,
+        type: ChallengeTypeEnum.PRIVATE,
+        status: ChallengeStatusEnum.ONGOING,
+        startDate: DateTime.now(),
+        endDate: DateTime.now().add(const Duration(days: 7)),
+      );
+      challenge1.id = 'challenge1';
+
+      final challenge2 = Challenge(
+        ownerId: 'owner2',
+        name: 'Private Challenge 2',
+        goalDistance: 200.0,
+        type: ChallengeTypeEnum.PRIVATE,
+        status: ChallengeStatusEnum.ONGOING,
+        startDate: DateTime.now(),
+        endDate: DateTime.now().add(const Duration(days: 7)),
+      );
+      challenge2.id = 'challenge2';
+
+      // Mock challengeRepository.getChallengesByType
+      when(mockChallengeRepository.getChallengesByType(ChallengeTypeEnum.PRIVATE))
+          .thenAnswer((_) async => [challenge1, challenge2]);
+
+      when(mockChallengeRepository.getChallengeById('challenge1'))
+          .thenAnswer((_) async => challenge1);
+      when(mockChallengeRepository.addTotalNumberOfParticipants('challenge1', 1))
+          .thenAnswer((_) async => challenge1);
+
+      // Create a participant for challenge1
+      await participantRepository.addParticipant(
+        Participant(
+          userId: 'user1',
+          challengeId: 'challenge1',
+          totalDistance: 10.0,
+        ),
+      );
+
+      // Get challenges for user1
+      final userChallenges = await participantRepository.getChallengesByTypeAndUserId(
+        ChallengeTypeEnum.PRIVATE,
+        'user1',
+      );
+
+      // Verify results
+      expect(userChallenges.length, 1);
+      expect(userChallenges[0].id, 'challenge1');
+      expect(userChallenges[0].type, ChallengeTypeEnum.PRIVATE);
+    });
+
+    test('getChallengesByStatusAndUserId returns correct challenges', () async {
+      // Setup test challenges
+      final challenge1 = Challenge(
+        ownerId: 'owner1',
+        name: 'Ongoing Challenge 1',
+        goalDistance: 100.0,
+        type: ChallengeTypeEnum.PRIVATE,
+        status: ChallengeStatusEnum.ONGOING,
+        startDate: DateTime.now(),
+        endDate: DateTime.now().add(const Duration(days: 7)),
+      );
+      challenge1.id = 'challenge1';
+
+      final challenge2 = Challenge(
+        ownerId: 'owner2',
+        name: 'Ongoing Challenge 2',
+        goalDistance: 200.0,
+        type: ChallengeTypeEnum.PUBLIC,
+        status: ChallengeStatusEnum.ONGOING,
+        startDate: DateTime.now(),
+        endDate: DateTime.now().add(const Duration(days: 7)),
+      );
+      challenge2.id = 'challenge2';
+
+      // Mock challengeRepository.getChallengesByStatus
+      when(mockChallengeRepository.getChallengesByStatus(ChallengeStatusEnum.ONGOING))
+          .thenAnswer((_) async => [challenge1, challenge2]);
+
+      when(mockChallengeRepository.getChallengeById('challenge1'))
+          .thenAnswer((_) async => challenge1);
+      when(mockChallengeRepository.addTotalNumberOfParticipants('challenge1', 1))
+          .thenAnswer((_) async => challenge1);
+
+      // Create a participant for challenge1
+      await participantRepository.addParticipant(
+        Participant(
+          userId: 'user1',
+          challengeId: 'challenge1',
+          totalDistance: 10.0,
+        ),
+      );
+
+      // Get challenges for user1
+      final userChallenges = await participantRepository.getChallengesByStatusAndUserId(
+        ChallengeStatusEnum.ONGOING,
+        'user1',
+      );
+
+      // Verify results
+      expect(userChallenges.length, 1);
+      expect(userChallenges[0].id, 'challenge1');
+      expect(userChallenges[0].status, ChallengeStatusEnum.ONGOING);
+    });
+
+    test('getChallengesByTypeAndUserIdAndStatus returns correct challenges', () async {
+      // Setup test challenges
+      final challenge1 = Challenge(
+        ownerId: 'owner1',
+        name: 'Private Ongoing Challenge 1',
+        goalDistance: 100.0,
+        type: ChallengeTypeEnum.PRIVATE,
+        status: ChallengeStatusEnum.ONGOING,
+        startDate: DateTime.now(),
+        endDate: DateTime.now().add(const Duration(days: 7)),
+      );
+      challenge1.id = 'challenge1';
+
+      final challenge2 = Challenge(
+        ownerId: 'owner2',
+        name: 'Private Completed Challenge',
+        goalDistance: 200.0,
+        type: ChallengeTypeEnum.PRIVATE,
+        status: ChallengeStatusEnum.COMPLETED,
+        startDate: DateTime.now(),
+        endDate: DateTime.now().add(const Duration(days: 7)),
+      );
+      challenge2.id = 'challenge2';
+
+      // Mock challengeRepository.getChallengesByType
+      when(mockChallengeRepository.getChallengesByType(ChallengeTypeEnum.PRIVATE))
+          .thenAnswer((_) async => [challenge1, challenge2]);
+
+      when(mockChallengeRepository.getChallengeById('challenge1'))
+          .thenAnswer((_) async => challenge1);
+      when(mockChallengeRepository.addTotalNumberOfParticipants('challenge1', 1))
+          .thenAnswer((_) async => challenge1);
+
+      when(mockChallengeRepository.getChallengeById('challenge2'))
+          .thenAnswer((_) async => challenge2);
+      when(mockChallengeRepository.addTotalNumberOfParticipants('challenge2', 1))
+          .thenAnswer((_) async => challenge2);
+
+      // Create participants for both challenges
+      await participantRepository.addParticipant(
+        Participant(
+          userId: 'user1',
+          challengeId: 'challenge1',
+          totalDistance: 10.0,
+        ),
+      );
+
+      await participantRepository.addParticipant(
+        Participant(
+          userId: 'user1',
+          challengeId: 'challenge2',
+          totalDistance: 20.0,
+        ),
+      );
+
+      // Get challenges for user1 with specific type and status
+      final userChallenges = await participantRepository.getChallengesByTypeAndUserIdAndStatus(
+        ChallengeTypeEnum.PRIVATE,
+        'user1',
+        ChallengeStatusEnum.ONGOING,
+      );
+
+      // Verify results
+      expect(userChallenges.length, 1);
+      expect(userChallenges[0].id, 'challenge1');
+      expect(userChallenges[0].type, ChallengeTypeEnum.PRIVATE);
+      expect(userChallenges[0].status, ChallengeStatusEnum.ONGOING);
+    });
+
+    test('getChallengesByTypeAndUserIdAndStatus handles empty results', () async {
+      // Mock challengeRepository.getChallengesByType to return empty list
+      when(mockChallengeRepository.getChallengesByType(ChallengeTypeEnum.PRIVATE))
+          .thenAnswer((_) async => []);
+
+      final userChallenges = await participantRepository.getChallengesByTypeAndUserIdAndStatus(
+        ChallengeTypeEnum.PRIVATE,
+        'user1',
+        ChallengeStatusEnum.ONGOING,
+      );
+
+      expect(userChallenges, isEmpty);
+    });
+
+    test('getChallengesByTypeAndUserId handles repository errors', () async {
+      when(mockChallengeRepository.getChallengesByType(ChallengeTypeEnum.PRIVATE))
+          .thenThrow(Exception('Mock error'));
+
+      expect(
+            () => participantRepository.getChallengesByTypeAndUserId(
+          ChallengeTypeEnum.PRIVATE,
+          'user1',
+        ),
+        throwsException,
+      );
+    });
   });
 }
