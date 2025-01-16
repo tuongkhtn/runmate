@@ -1,5 +1,3 @@
-import 'package:runmate/repositories/participant_repository.dart';
-
 import '../enums/challenge_status_enum.dart';
 import '../enums/challenge_type_enum.dart';
 import '../models/challenge.dart';

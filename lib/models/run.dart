@@ -1,63 +1,85 @@
-class RoutePoint {
-  final double lat;
-  final double lng;
+class LatLngPoint {
+  final double latitude;
+  final double longitude;
+  final DateTime timestamp;
 
-  RoutePoint({required this.lat, required this.lng});
+  LatLngPoint({
+    required this.latitude,
+    required this.longitude,
+    required this.timestamp,
+  });
 
-  factory RoutePoint.fromJson(Map<String, dynamic> json) {
-    return RoutePoint(
-      lat: (json['lat'] as num).toDouble(),
-      lng: (json['lng'] as num).toDouble(),
+  factory LatLngPoint.fromJson(Map<String, dynamic> json) {
+    return LatLngPoint(
+      latitude: json['latitude'],
+      longitude: json['longitude'],
+      timestamp: DateTime.parse(json['timestamp']),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'lat': lat,
-      'lng': lng,
+      'latitude': latitude,
+      'longitude': longitude,
+      'timestamp': timestamp.toIso8601String(),
     };
   }
 }
 
 class Run {
-  final String runId;
+  String? id;
+  final String userId;
+  final String? challengeId;
   final double distance;
   final int duration;
-  final DateTime startTime;
-  final DateTime endTime;
-  final List<RoutePoint> route;
+  final DateTime date;
+  final int steps;
+  final double calories;
+  final double averagePace; // minutes per kilometer
+  final double averageSpeed; // kilometers per hour
+  final List<LatLngPoint> route;
 
   Run({
-    required this.runId,
-    required this.distance,
-    required this.duration,
-    required this.startTime,
-    required this.endTime,
-    required this.route,
+    required this.userId,
+    this.challengeId,
+    this.distance = 0,
+    this.duration = 0,
+    required this.date,
+    this.steps = 0,
+    this.calories = 0,
+    this.averagePace = 0,
+    this.averageSpeed = 0,
+    this.route = const [],
   });
 
   factory Run.fromJson(Map<String, dynamic> json) {
-    var routeList = (json['route'] as List)
-        .map((point) => RoutePoint.fromJson(point as Map<String, dynamic>))
-        .toList();
-
     return Run(
-      runId: json['runId'] as String,
-      distance: (json['distance'] as num).toDouble(),
-      duration: json['duration'] as int,
-      startTime: DateTime.parse(json['startTime'] as String),
-      endTime: DateTime.parse(json['endTime'] as String),
-      route: routeList,
+      userId: json['userId'],
+      challengeId: json['challengeId'],
+      distance: json['distance'],
+      duration: json['duration'],
+      date: DateTime.parse(json['date']),
+      steps: json['steps'],
+      calories: json['calories'],
+      averagePace: json['averagePace'],
+      averageSpeed: json['averageSpeed'],
+      route: (json['route'] as List)
+          .map((point) => LatLngPoint.fromJson(point))
+          .toList(),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'runId': runId,
+      'userId': userId,
+      'challengeId': challengeId,
       'distance': distance,
       'duration': duration,
-      'startTime': startTime.toIso8601String(),
-      'endTime': endTime.toIso8601String(),
+      'date': date.toIso8601String(),
+      'steps': steps,
+      'calories': calories,
+      'averagePace': averagePace,
+      'averageSpeed': averageSpeed,
       'route': route.map((point) => point.toJson()).toList(),
     };
   }
