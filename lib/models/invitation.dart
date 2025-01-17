@@ -3,14 +3,12 @@ import 'package:runmate/enums/invitation_status_enum.dart';
 class Invitation {
   String? id;
   final String challengeId;
-  final String inviteeId;
   final String email;
   final InvitationStatusEnum status;
   final DateTime sentAt;
 
   Invitation({
     required this.challengeId,
-    required this.inviteeId,
     required this.email,
     required this.status,
     DateTime? sentAt,
@@ -19,7 +17,6 @@ class Invitation {
   factory Invitation.fromJson(Map<String, dynamic> json) {
     return Invitation(
       challengeId: json['challengeId'] as String,
-      inviteeId: json['inviteeId'] as String,
       email: json['email'] as String,
       status: InvitationStatusEnum.values.firstWhere((e) => e.toString() == "InvitationStatusEnum.${json['status']}"),
       sentAt: DateTime.parse(json['sentAt'] as String),
@@ -29,7 +26,6 @@ class Invitation {
   Map<String, dynamic> toJson() {
     return {
       'challengeId': challengeId,
-      'inviteeId': inviteeId,
       'email': email,
       'status': status.toString().split('.').last,
       'sentAt': sentAt.toIso8601String(),
