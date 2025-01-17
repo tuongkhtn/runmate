@@ -56,6 +56,19 @@ class ChallengeRepository extends BaseRepository {
     }
   }
 
+  Future<Challenge> getChallengeByName(String name) async {
+    try {
+      final snapshot = await collection.where('name', isEqualTo: name).get();
+      if (snapshot.docs.isEmpty) throw Exception('Challenge not found');
+      final doc = snapshot.docs.first;
+      Challenge challenge = Challenge.fromJson(doc.data() as Map<String, dynamic>);
+      challenge.id = doc.id;
+      return challenge;
+    } catch (e) {
+      throw Exception('Error getting challenge by name: $e');
+    }
+  }
+
   Future<List<Challenge>> getAllChallenges() async {
     try {
       final snapshot = await collection.get();

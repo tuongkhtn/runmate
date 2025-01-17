@@ -1,29 +1,14 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:runmate/models/invitation.dart';
-import 'package:runmate/models/participant.dart';
-import 'package:runmate/repositories/challenge_repository.dart';
-import 'package:runmate/repositories/invitation_repository.dart';
-import 'package:runmate/repositories/participant_repository.dart';
-import '../enums/challenge_status_enum.dart';
-import '../enums/challenge_type_enum.dart';
 import '../models/user.dart';
-import '../models/challenge.dart';
 import 'base_repository.dart';
 
 class UserRepository extends BaseRepository {
   final CollectionReference collection;
-  ChallengeRepository challengeRepository;
-  ParticipantRepository participantRepository;
-  InvitationRepository invitationRepository;
 
-  UserRepository() :
-        challengeRepository = ChallengeRepository(),
-        invitationRepository = InvitationRepository(),
-        participantRepository = ParticipantRepository(),
-        collection = FirebaseFirestore.instance.collection('users');
+  UserRepository() : collection = FirebaseFirestore.instance.collection('users');
 
-  UserRepository.withMockFirestore(super.firestore, this.challengeRepository, this.invitationRepository, this.participantRepository)
+  UserRepository.withMockFirestore(super.firestore)
       : collection = firestore.collection('users'),
         super.withMockFirestore();
 
@@ -48,13 +33,24 @@ class UserRepository extends BaseRepository {
       final doc = await collection.doc(userId).get();
       if (!doc.exists) throw Exception('User not found');
 
-      print("Doc: ${doc.data()}");
-
       final user = User.fromJson(doc.data() as Map<String, dynamic>);
       user.id = doc.id;
       return user;
     } catch (e) {
       throw Exception('Error getting user by userId: $e');
+    }
+  }
+
+  Future<User> getUserByEmail(String email) async {
+    try {
+      final snapshot = await collection.where('email', isEqualTo: email).get();
+      if (snapshot.docs.isEmpty) throw Exception('User not found');
+      final doc = snapshot.docs.first;
+      final user = User.fromJson(doc.data() as Map<String, dynamic>);
+      user.id = doc.id;
+      return user;
+    } catch (e) {
+      throw Exception('Error getting user by email: $e');
     }
   }
 
@@ -64,18 +60,19 @@ class UserRepository extends BaseRepository {
       final doc = await collection.doc(userId).get();
       return doc.exists;
     } catch (e) {
-    throw Exception('Error checking if user exists: $e');
+      throw Exception('Error checking if user exists: $e');
     }
   }
 
-  Future<void> createUser(User user) async {
+  Future<User> createUser(User user) async {
     try {
-      if (user.id == null) {
-        throw Exception('User ID (UID) is required to create user in Firestore');
-      }
-      await collection.doc(user.id).set(user.toJson());
+      final docRef = await collection.add(user.toJson());
+      User createdUser = await getUserById(docRef.id);
+      createdUser.id = docRef.id;
+      return createdUser;
     } catch (e) {
-      throw Exception('Error creating user: $e');
+      print('Error creating user: $e');
+      throw Exception('Error creating user');
     }
   }
 
@@ -149,37 +146,6 @@ class UserRepository extends BaseRepository {
       await collection.doc(userId).delete();
     } catch (e) {
       throw Exception('Error deleting user: $e');
-    }
-  }
-
-  Future<List<Challenge>> getChallengesByTypeAndUserId(ChallengeTypeEnum type, String userId) async {
-    try {
-      final challengesByType = await challengeRepository.getChallengesByType(type);
-      final challengesByUserId = await participantRepository.getParticipantsByUserId(userId);
-      return challengesByType.where((challenge) => challengesByUserId.any((participant) => participant.challengeId == challenge.id)).toList();
-    } catch (e) {
-      throw Exception('Error getting challenges by type and user ID: $e');
-    }
-  }
-
-  Future<List<Challenge>> getChallengesByStatusAndUserId(ChallengeStatusEnum status, String userId) async {
-    try {
-      final challengesByStatus = await challengeRepository.getChallengesByStatus(status);
-      final challengesByUserId = await participantRepository.getParticipantsByUserId(userId);
-      return challengesByStatus.where((challenge) => challengesByUserId.any((participant) => participant.challengeId == challenge.id)).toList();
-    } catch (e) {
-      throw Exception('Error getting challenges by status and user ID: $e');
-    }
-  }
-
-  Future<List<Challenge>> getChallengesByTypeAndStatusAndUserId(ChallengeTypeEnum type, ChallengeStatusEnum status, String userId) async {
-    try {
-      final challengesByType = await challengeRepository.getChallengesByType(type);
-      final challengesByStatus = await challengeRepository.getChallengesByStatus(status);
-      final challengesByUserId = await participantRepository.getParticipantsByUserId(userId);
-      return challengesByType.where((challenge) => challengesByStatus.any((c) => c.id == challenge.id) && challengesByUserId.any((participant) => participant.challengeId == challenge.id)).toList();
-    } catch (e) {
-      throw Exception('Error getting challenges by type, status, and user ID: $e');
     }
   }
 }
