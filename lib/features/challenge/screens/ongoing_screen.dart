@@ -5,7 +5,8 @@ import 'package:runmate/repositories/user_repository.dart';
 import 'package:runmate/models/challenge.dart';
 import 'package:runmate/common/utils/date_formatter.dart';
 
-import '../../../enums/challenge_status_enum.dart'; // Import model Challenge
+import '../../../enums/challenge_status_enum.dart';
+import 'ongoing_detail_screen.dart'; // Import model Challenge
 
 class OngoingList extends StatefulWidget {
   const OngoingList({super.key});
@@ -30,7 +31,7 @@ class _OngoingListState extends State<OngoingList> {
       // Gọi hàm từ UserRepository
       final challenges = await _participantRepository.getChallengesByStatusAndUserId(
         ChallengeStatusEnum.ongoing, // Thay bằng trạng thái phù hợp
-        "SqhUBChJjWwJq5tvdf8P"
+        "uHc1cbv0vMvLH3qG9Bh6"
       );
       setState(() {
         _challenges = challenges;
@@ -150,7 +151,14 @@ class _OngoingListState extends State<OngoingList> {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => OngoingDetailScreen(challenge: challenge),
+                  ),
+                );
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: kPrimaryColor,
                 padding: const EdgeInsets.symmetric(vertical: 12),
