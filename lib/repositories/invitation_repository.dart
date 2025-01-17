@@ -1,3 +1,5 @@
+import 'package:runmate/enums/invitation_status_enum.dart';
+
 import '../models/invitation.dart';
 import 'base_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -20,6 +22,15 @@ class InvitationRepository extends BaseRepository {
     }
   }
 
+  Future<Invitation> createInvitationWithEmail(String challengeId, String email) async {
+    try {
+      final invitation = Invitation(challengeId: challengeId, email: email, status: InvitationStatusEnum.pending);
+      return createInvitation(invitation);
+    } catch (e) {
+      throw Exception('Error creating invitation with email: $e');
+    }
+  }
+
   Future<Invitation> getInvitationById(String invitationId) async {
     try {
       final doc = await collection.doc(invitationId).get();
@@ -29,19 +40,6 @@ class InvitationRepository extends BaseRepository {
       return invitation;
     } catch (e) {
       throw Exception('Error getting invitation by ID: $e');
-    }
-  }
-
-  Future<List<Invitation>> getInvitationsByInviteeId(String inviteeId) async {
-    try {
-      final snapshot = await collection.where('inviteeId', isEqualTo: inviteeId).get();
-      return snapshot.docs.map((doc) {
-        Invitation invitation = Invitation.fromJson(doc.data() as Map<String, dynamic>);
-        invitation.id = doc.id;
-        return invitation;
-      }).toList();
-    } catch (e) {
-      throw Exception('Error getting invitations by invitee ID: $e');
     }
   }
 
@@ -84,16 +82,16 @@ class InvitationRepository extends BaseRepository {
     }
   }
 
-  Future<List<Invitation>> getInvitationsByInviteeIdAndStatus(String inviteeId, String status) async {
+  Future<List<Invitation>> getInvitationsByEmailAndStatus(String email, String status) async {
     try {
-      final snapshot = await collection.where('inviteeId', isEqualTo: inviteeId).where('status', isEqualTo: status).get();
+      final snapshot = await collection.where('email', isEqualTo: email).where('status', isEqualTo: status).get();
       return snapshot.docs.map((doc) {
         Invitation invitation = Invitation.fromJson(doc.data() as Map<String, dynamic>);
         invitation.id = doc.id;
         return invitation;
       }).toList();
     } catch (e) {
-      throw Exception('Error getting invitations by invitee ID and status: $e');
+      throw Exception('Error getting invitations by email and status: $e');
     }
   }
 

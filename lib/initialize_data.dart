@@ -2,13 +2,16 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:runmate/models/challenge.dart';
 import 'package:runmate/repositories/challenge_repository.dart';
+import 'package:runmate/repositories/invitation_repository.dart';
 import 'package:runmate/repositories/participant_repository.dart';
 import 'package:runmate/repositories/run_repository.dart';
 import 'package:runmate/repositories/user_repository.dart';
 
 import 'enums/challenge_status_enum.dart';
 import 'enums/challenge_type_enum.dart';
+import 'enums/invitation_status_enum.dart';
 import 'firebase_options.dart';
+import 'models/invitation.dart';
 import 'models/participant.dart';
 import 'models/run.dart';
 import 'models/user.dart';
@@ -18,18 +21,20 @@ class InitializeFirebase {
   static final ChallengeRepository _challengeRepository = ChallengeRepository();
   static final ParticipantRepository _participantRepository = ParticipantRepository();
   static final RunRepository _runRepository = RunRepository();
+  static final InvitationRepository _invitationRepository = InvitationRepository();
 
   static Future<void> initialize() async {
     // WidgetsFlutterBinding.ensureInitialized();
     // await Firebase.initializeApp();
 
-    await _initializeUser();
-    await _initializeChallenge();
-    await _initializeParticipant();
-    await _initializeRun();
+    await _initializeUsers();
+    await _initializeChallenges();
+    await _initializeParticipants();
+    await _initializeRuns();
+    await _initializeInvitations();
   }
 
-  static Future<void> _initializeUser() async {
+  static Future<void> _initializeUsers() async {
     _userRepository.createUser(User(
       name: "Admin",
       email: "admin@gmail.com",
@@ -86,7 +91,7 @@ class InitializeFirebase {
     ));
   }
 
-  static Future<void> _initializeChallenge() async {
+  static Future<void> _initializeChallenges() async {
     _challengeRepository.createChallenge(Challenge(
       ownerId: (await _userRepository.getUserByEmail("admin@gmail.com")).id!,
       name: "Challenge 1",
@@ -328,7 +333,7 @@ class InitializeFirebase {
     ));
   }
 
-  static Future<void> _initializeParticipant() async {
+  static Future<void> _initializeParticipants() async {
     final users = await Future.wait([
       _userRepository.getUserByEmail("admin@gmail.com"),
       _userRepository.getUserByEmail("janedoe@gmail.com"),
@@ -448,7 +453,7 @@ class InitializeFirebase {
     }
   }
 
-  static Future<void> _initializeRun() async {
+  static Future<void> _initializeRuns() async {
     final users = await _userRepository.getAllUsers();
     final challenges = await _challengeRepository.getAllChallenges();
     final now = DateTime(2025, 1, 17); // Current date from context
@@ -499,6 +504,119 @@ class InitializeFirebase {
           ));
         }
       }
+    }
+  }
+
+  static Future<void> _initializeInvitations() async {
+    final invitations = [
+      // Challenge 1 invitations
+      Invitation(
+        challengeId: (await _challengeRepository.getChallengeByName("Challenge 1")).id!,
+        email: "alicesmith@gmail.com",
+        status: InvitationStatusEnum.pending,
+      ),
+      Invitation(
+        challengeId: (await _challengeRepository.getChallengeByName("Challenge 1")).id!,
+        email: "bobjohnson@gmail.com",
+        status: InvitationStatusEnum.accepted,
+      ),
+      Invitation(
+        challengeId: (await _challengeRepository.getChallengeByName("Challenge 1")).id!,
+        email: "charliebrown@gmail.com",
+        status: InvitationStatusEnum.declined,
+      ),
+      Invitation(
+        challengeId: (await _challengeRepository.getChallengeByName("Challenge 1")).id!,
+        email: "admin@gmail.com",
+        status: InvitationStatusEnum.accepted,
+      ),
+      // Challenge 2 invitations
+      Invitation(
+        challengeId: (await _challengeRepository.getChallengeByName("Challenge 2")).id!,
+        email: "janedoe@gmail.com",
+        status: InvitationStatusEnum.pending,
+      ),
+      Invitation(
+        challengeId: (await _challengeRepository.getChallengeByName("Challenge 2")).id!,
+        email: "bobjohnson@gmail.com",
+        status: InvitationStatusEnum.accepted,
+      ),
+      Invitation(
+        challengeId: (await _challengeRepository.getChallengeByName("Challenge 2")).id!,
+        email: "admin@gmail.com",
+        status: InvitationStatusEnum.pending,
+      ),
+      Invitation(
+        challengeId: (await _challengeRepository.getChallengeByName("Challenge 2")).id!,
+        email: "charliebrown@gmail.com",
+        status: InvitationStatusEnum.declined,
+      ),
+      // Challenge 3 invitations
+      Invitation(
+        challengeId: (await _challengeRepository.getChallengeByName("Challenge 3")).id!,
+        email: "charliebrown@gmail.com",
+        status: InvitationStatusEnum.pending,
+      ),
+      Invitation(
+        challengeId: (await _challengeRepository.getChallengeByName("Challenge 3")).id!,
+        email: "janedoe@gmail.com",
+        status: InvitationStatusEnum.accepted,
+      ),
+      Invitation(
+        challengeId: (await _challengeRepository.getChallengeByName("Challenge 3")).id!,
+        email: "bobjohnson@gmail.com",
+        status: InvitationStatusEnum.declined,
+      ),
+      Invitation(
+        challengeId: (await _challengeRepository.getChallengeByName("Challenge 3")).id!,
+        email: "admin@gmail.com",
+        status: InvitationStatusEnum.accepted,
+      ),
+      // Admin user additional invitations
+      Invitation(
+        challengeId: (await _challengeRepository.getChallengeByName("Challenge 1")).id!,
+        email: "admin@gmail.com",
+        status: InvitationStatusEnum.pending,
+      ),
+      Invitation(
+        challengeId: (await _challengeRepository.getChallengeByName("Challenge 2")).id!,
+        email: "admin@gmail.com",
+        status: InvitationStatusEnum.declined,
+      ),
+      Invitation(
+        challengeId: (await _challengeRepository.getChallengeByName("Challenge 3")).id!,
+        email: "admin@gmail.com",
+        status: InvitationStatusEnum.accepted,
+      ),
+      Invitation(
+        challengeId: (await _challengeRepository.getChallengeByName("Challenge 1")).id!,
+        email: "janedoe@gmail.com",
+        status: InvitationStatusEnum.accepted,
+      ),
+      Invitation(
+        challengeId: (await _challengeRepository.getChallengeByName("Challenge 2")).id!,
+        email: "bobjohnson@gmail.com",
+        status: InvitationStatusEnum.pending,
+      ),
+      Invitation(
+        challengeId: (await _challengeRepository.getChallengeByName("Challenge 3")).id!,
+        email: "alicesmith@gmail.com",
+        status: InvitationStatusEnum.declined,
+      ),
+      Invitation(
+        challengeId: (await _challengeRepository.getChallengeByName("Challenge 2")).id!,
+        email: "charliebrown@gmail.com",
+        status: InvitationStatusEnum.pending,
+      ),
+      Invitation(
+        challengeId: (await _challengeRepository.getChallengeByName("Challenge 3")).id!,
+        email: "janedoe@gmail.com",
+        status: InvitationStatusEnum.accepted,
+      ),
+    ];
+
+    for (var invitation in invitations) {
+      await _invitationRepository.createInvitation(invitation);
     }
   }
 }
