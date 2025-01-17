@@ -18,15 +18,21 @@ class UserModel {
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
-    return UserModel(
-      userId: json['userId'] as String,
-      name: json['name'] as String,
-      email: json['email'] as String,
-      avatarUrl: json['avatarUrl'] as String,
-      totalDistance: (json['totalDistance'] as num).toDouble(),
-      totalTime: json['totalTime'] as int,
-      createdAt: DateTime.parse(json['createdAt'] as String),
-    );
+    try {
+      return UserModel(
+        userId: json['userId'] as String? ?? '',
+        name: json['name'] as String? ?? '',
+        email: json['email'] as String? ?? '',
+        avatarUrl: json['avatarUrl'] as String? ?? '',
+        totalDistance: (json['totalDistance'] as num?)?.toDouble() ?? 0.0,
+        totalTime: json['totalTime'] as int? ?? 0,
+        createdAt: json['createdAt'] != null
+            ? DateTime.parse(json['createdAt'] as String)
+            : DateTime.now(),
+      );
+    } catch (e) {
+      throw Exception("Error parsing UserModel: $e");
+    }
   }
 
   Map<String, dynamic> toJson() {

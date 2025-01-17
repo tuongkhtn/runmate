@@ -1,13 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import "package:firebase_storage/firebase_storage.dart";
+// import "package:firebase_storage/firebase_storage.dart";
 import '../models/user_model.dart';
 import "dart:io";
 
 class UserService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseStorage _storage = FirebaseStorage.instance;
+  // final FirebaseStorage _storage = FirebaseStorage.instance;
 
   Future<void> saveUserToFirestore(UserModel userModel) async {
     final userRef = _firestore.collection("users").doc(userModel.userId);
@@ -63,14 +63,14 @@ class UserService {
     }
   }
 
-  Future<String> uploadAvatar(File avatar) async {
-    try {
-      final storageRef = _storage.ref().child('avatars/${DateTime.now().millisecondsSinceEpoch}.jpg');
-      await storageRef.putFile(avatar);
-      final url = await storageRef.getDownloadURL();
-      return url;
-    } catch(e) {
-      throw Exception("Failed to upload avatar: $e");
-    }
-  }
+  // Future<String> uploadAvatar(File avatar) async {
+  //   try {
+  //     final storageRef = _storage.ref().child('avatars/${DateTime.now().millisecondsSinceEpoch}.jpg');
+  //     await storageRef.putFile(avatar);
+  //     final url = await storageRef.getDownloadURL();
+  //     return url;
+  //   } catch(e) {
+  //     throw Exception("Failed to upload avatar: $e");
+  //   }
+  // }
 }
