@@ -1,5 +1,4 @@
 import "dart:io";
-
 import "package:cloud_firestore/cloud_firestore.dart";
 import 'package:flutter/material.dart';
 import "package:firebase_core/firebase_core.dart";
@@ -9,6 +8,7 @@ import "features/auth/screens/register_screen.dart";
 import "features/profile/screens/profile_screen.dart";
 import 'package:provider/provider.dart';
 import 'common/providers/user_id_provider.dart';
+import 'common/widgets/custom_bottom_navbar.dart';
 
 const bool USE_EMULATOR = false;
 
@@ -52,7 +52,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => const GetStartedScreen(),
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
-        '/home': (context) => const ProfileScreen(), // ProfileScreen sẽ nhận arguments
+        '/home': (context) => const CustomBottomNavbar(), // ProfileScreen sẽ nhận arguments
       },
       initialRoute: '/',
     );
