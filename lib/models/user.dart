@@ -1,5 +1,5 @@
 class User {
-  String? id;
+  String? id; // ID từ Firebase Authentication
   final String name;
   final String email;
   final String avatarUrl;
@@ -11,6 +11,7 @@ class User {
   final DateTime createdAt;
 
   User({
+    this.id, // Gán id nếu có
     required this.name,
     required this.email,
     this.avatarUrl = "",
@@ -23,8 +24,9 @@ class User {
   })  : dateOfBirth = dateOfBirth ?? DateTime(2000, 1, 1),
         createdAt = createdAt ?? DateTime.now();
 
-  factory User.fromJson(Map<String, dynamic> json) {
+  factory User.fromJson(Map<String, dynamic> json, {String? id}) {
     return User(
+      id: id, // ID có thể được truyền từ bên ngoài
       name: json['name'] as String,
       email: json['email'] as String,
       avatarUrl: json['avatarUrl'] as String,
