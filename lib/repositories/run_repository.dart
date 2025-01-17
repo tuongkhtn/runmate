@@ -111,12 +111,17 @@ class RunRepository extends BaseRepository {
           .orderBy('date', descending: true)
           .limit(1)
           .get();
+
+      if (querySnapshot.docs.isEmpty) {
+        return  Run(userId: "", date: new DateTime(2020, 10, 10)); // Return an empty run object if no runs are found
+      }
+
       return querySnapshot.docs
           .map((doc) {
-            Run run = Run.fromJson(doc.data() as Map<String, dynamic>);
-            run.id = doc.id;
-            return run;
-          })
+        Run run = Run.fromJson(doc.data() as Map<String, dynamic>);
+        run.id = doc.id;
+        return run;
+      })
           .first;
     } catch (e) {
       throw Exception('Error getting latest run by user ID: $e');
@@ -170,7 +175,7 @@ class RunRepository extends BaseRepository {
     }
   }
 
-  Future<Run> updateDistanceAndDuration(String runId, double distance, int duration) async {
+  Future<Run> updateDistanceAndDuration(String runId, double distance, Duration duration) async {
     try {
       await collection.doc(runId).update({'distance': distance, 'duration': duration});
       Run? updatedRun = await getRunById(runId);
@@ -249,7 +254,7 @@ class RunRepository extends BaseRepository {
   }
 
   Future<Run> updateDistanceAndDurationAndRouteAndStepsAndCaloriesAndAveragePaceAndAverageSpeed(
-      String runId, double distance, int duration, List<LatLngPoint> route, int steps, double calories, double averagePace, double averageSpeed) async {
+      String runId, double distance, Duration duration, List<LatLngPoint> route, int steps, double calories, double averagePace, double averageSpeed) async {
     try {
       await collection.doc(runId).update({
         'distance': distance,
@@ -278,4 +283,22 @@ class RunRepository extends BaseRepository {
       throw Exception('Error deleting run: $e');
     }
   }
-}
+
+  Future<int> getStreakByUserID(String userID) async {
+    int streak = 0;
+    try {
+      await collection.where('userId', isEqualTo: userID).orderBy('date', descending: true).get().then((querySnapshot) {
+        querySnapshot.docs.forEach((doc) {
+          Run run = Run.fromJson(doc.data() as Map<String, dynamic>);
+          run.id = doc.id;
+          if (run.date.difference(DateTime.now()).inDays == 1) {
+            streak++;
+          }
+        });
+      });
+    } catch (e) {
+      throw Exception('Error getting streak by user ID: $e');
+    }
+      return streak;
+    }
+  }

@@ -32,7 +32,7 @@ void main() {
       String userId = 'user123',
       String? challengeId = 'challenge123',
       double distance = 5.0,
-      int duration = 1800,
+      Duration duration = const Duration(hours: 1),
       DateTime? date,
       int steps = 6000,
       double calories = 400,
@@ -127,7 +127,7 @@ void main() {
       final updatedRun = Run(
         userId: createdRun.userId,
         distance: 10.0,
-        duration: 3600,
+        duration: Duration(hours: 1),
         date: createdRun.date,
       );
       updatedRun.id = createdRun.id;

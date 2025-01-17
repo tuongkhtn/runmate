@@ -14,7 +14,7 @@ class RunnerOverlay extends StatelessWidget {
     if(user != null) {
       Navigator.pushNamed(context, "/home");
     } else {
-      Navigator.pushNamed(context, "/login");
+      Navigator.pushNamed(context, "/let_run");
     }
   }
 
@@ -70,6 +70,7 @@ class RunnerOverlay extends StatelessWidget {
                       )
                   )
               ),
+
             ),
 
             const SizedBox(height: 15),
