@@ -32,47 +32,14 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  Future<void> _login() async {
+  void _login() {
     if(!_formKey.currentState!.validate()) {
       return;
     }
 
-    final email = _emailController.text.trim();
-    final password = _passwordController.text.trim();
+    Provider.of<UserIdProvider>(context, listen: false).setUserId("EkVYecoAlIP7gjJHItCdVuYORrl2");
 
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      final user = await _authService.signInWithEmailAndPassword(email, password);
-
-      if(user != null) {
-        Provider.of<UserIdProvider>(context, listen: false).setUserId(user.uid);
-
-        final userModel = await _userRepository.getUserById(user.uid);
-        if(userModel != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Login successful!")),
-          );
-
-          // Điều hướng sang màn hình chính hoặc trang khác
-          Navigator.pushNamed(context, '/home');
-        }
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Failed to login. User is null!")),
-        );
-      }
-    } catch(e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error Login: ${e.toString()}")),
-      );
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
+    Navigator.pushNamed(context, '/home');
   }
 
   @override

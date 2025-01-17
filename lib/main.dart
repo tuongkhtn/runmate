@@ -3,8 +3,11 @@ import "package:cloud_firestore/cloud_firestore.dart";
 import 'package:flutter/material.dart';
 import "package:firebase_core/firebase_core.dart";
 import "package:provider/provider.dart";
+import "package:runmate/features/challenge/screens/challenge_screen.dart";
+import "package:runmate/firebase_options.dart";
 import "package:runmate/initialize_data.dart";
 import "common/providers/user_id_provider.dart";
+import "features/let_run/screens/run_screen.dart";
 import "features/onboarding/screens/get_started_screen.dart";
 import "features/auth/screens/login_screen.dart";
 import "features/auth/screens/register_screen.dart";
@@ -14,14 +17,12 @@ import 'common/widgets/custom_bottom_navbar.dart';
 import "package:firebase_app_check/firebase_app_check.dart";
 
 const bool USE_EMULATOR = false;
-const bool INITIALIZE_FIREBASE = true;
+const bool INITIALIZE_FIREBASE = false;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-
-  await FirebaseAppCheck.instance.activate(
-    androidProvider: AndroidProvider.playIntegrity,
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
   );
 
   if (USE_EMULATOR) {
@@ -65,12 +66,13 @@ class MyApp extends StatelessWidget {
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
         '/profile': (context) => const ProfileScreen(),
-        //   '/let_run': (context) => const RunScreen(),
+        '/let_run': (context) => const RunScreen(),
         '/test': (context) => const UserFormScreen(),
+        '/challenge': (context) => const ChallengeScreen(),
         '/home': (context) =>
             const CustomBottomNavbar(), // ProfileScreen sẽ nhận arguments
       },
-      initialRoute: '/home',
+      initialRoute: '/',
     );
   }
 }
