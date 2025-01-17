@@ -31,8 +31,8 @@ class _RunScreenState extends State<RunScreen> {
   // final RunStorageService _runStorageService = RunStorageService();
   GoogleMapController? _mapController;
   final String userID = 'EkVYecoAlIP7gjJHItCdVuYORrl2';
-  final UserRepository _userRepository = UserRepository();
-  final RunRepository _runRepository = RunRepository();
+  // final UserRepository _userRepository = UserRepository();
+  // final RunRepository _runRepository = RunRepository();
   User ?_user;
 
   int _streak = 0;
@@ -68,9 +68,11 @@ class _RunScreenState extends State<RunScreen> {
       return;
     }
 
-    final streak = await _runRepository.getStreakByUserID(userID);
-    final lastRun = await _runRepository.getRunLatestByUserId(userID);
-    final user = await _userRepository.getUserById(userID);
+    // final streak = await _runRepository.getStreakByUserID(userID);
+    // final lastRun = await _runRepository.getRunLatestByUserId(userID);
+    // final user = await _userRepository.getUserById(userID);
+
+
     setState(() {
       _streak = streak;
       _lastRun = lastRun;

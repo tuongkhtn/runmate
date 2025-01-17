@@ -1,18 +1,20 @@
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
+import "package:provider/provider.dart";
+import "package:runmate/common/providers/user_id_provider.dart";
 import "../../../common/utils/constants.dart";
 
 class RunnerOverlay extends StatelessWidget {
   const RunnerOverlay({super.key});
 
   void handleGetStarted(BuildContext context) {
-    final userProvider = Provider.of<UserProvider>(context, listen: false);
-    final user = userProvider.user;
+    final userProvider = Provider.of<UserIdProvider>(context, listen: false);
+    final user = userProvider.userId;
 
     if(user != null) {
       Navigator.pushNamed(context, "/home");
     } else {
-      Navigator.pushNamed(context, "/login");
+      Navigator.pushNamed(context, "/let_run");
     }
   }
 
