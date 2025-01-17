@@ -14,9 +14,8 @@ import "features/auth/screens/login_screen.dart";
 import "features/auth/screens/register_screen.dart";
 import "features/profile/screens/profile_screen.dart";
 import "features/test_screen.dart";
-import 'package:provider/provider.dart';
-import 'common/providers/user_id_provider.dart';
 import 'common/widgets/custom_bottom_navbar.dart';
+import "package:firebase_app_check/firebase_app_check.dart";
 
 const bool USE_EMULATOR = false;
 const bool INITIALIZE_FIREBASE = true;
