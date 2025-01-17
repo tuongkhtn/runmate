@@ -146,6 +146,22 @@ class ParticipantRepository extends BaseRepository {
     }
   }
 
+  Future<List<Challenge>> getRecommendedChallenges(String participantId) async {
+    try {
+      List<Challenge> allChallenges = await challengeRepository.getAllChallenges();
+      List<Participant> participantChallenges = await getParticipantsByUserId(participantId);
+      List<String?> participatedChallengeIds = participantChallenges.map((p) => p.challengeId).toList();
+
+      List<Challenge> recommendedChallenges = allChallenges.where((challenge) {
+        return !participatedChallengeIds.contains(challenge.id);
+      }).toList();
+
+      return recommendedChallenges;
+    } catch (e) {
+      throw Exception('Error getting recommended challenges: $e');
+    }
+  }
+
   Future<Participant> updateParticipant(String participantId, Participant participant) async {
     try {
       await collection.doc(participantId).update(participant.toJson());
