@@ -1,5 +1,4 @@
 import "dart:io";
-
 import "package:cloud_firestore/cloud_firestore.dart";
 import 'package:flutter/material.dart';
 import "package:firebase_core/firebase_core.dart";
@@ -12,6 +11,9 @@ import "features/auth/screens/login_screen.dart";
 import "features/auth/screens/register_screen.dart";
 import "features/profile/screens/profile_screen.dart";
 import "features/test_screen.dart";
+import 'package:provider/provider.dart';
+import 'common/providers/user_id_provider.dart';
+import 'common/widgets/custom_bottom_navbar.dart';
 
 const bool USE_EMULATOR = false;
 const bool INITIALIZE_FIREBASE = false;
@@ -56,17 +58,19 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: "Runmate",
-        routes: {
-          '/': (context) => const GetStartedScreen(),
-          '/login': (context) => const LoginScreen(),
-          '/register': (context) => const RegisterScreen(),
-          '/profile': (context) => const ProfileScreen(),
-       //   '/let_run': (context) => const RunScreen(),
-          '/test': (context) => const UserFormScreen(),
+      debugShowCheckedModeBanner: false,
+      title: "Runmate",
+      routes: {
+        '/': (context) => const GetStartedScreen(),
+        '/login': (context) => const LoginScreen(),
+        '/register': (context) => const RegisterScreen(),
+        '/profile': (context) => const ProfileScreen(),
+        //   '/let_run': (context) => const RunScreen(),
+        '/test': (context) => const UserFormScreen(),
+        '/home': (context) =>
+            const CustomBottomNavbar(), // ProfileScreen sẽ nhận arguments
       },
-        initialRoute: '/',
+      initialRoute: '/',
     );
   }
 }
