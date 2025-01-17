@@ -135,7 +135,7 @@ class RunRepository extends BaseRepository {
       final querySnapshot = await collection
           .where('userId', isEqualTo: userId)
           .where('date',
-          isGreaterThanOrEqualTo: DateTime.now().subtract(Duration(days: k)))
+          isGreaterThanOrEqualTo: DateTime.now().subtract(Duration(days: k)).toString())
           .orderBy('date', descending: true)
           .get();
       final runs = querySnapshot.docs
