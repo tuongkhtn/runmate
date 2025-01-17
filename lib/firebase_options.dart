@@ -54,6 +54,7 @@ class DefaultFirebaseOptions {
     appId: '1:6348589724:android:822f437f90e5dc66d17b59',
     messagingSenderId: '6348589724',
     projectId: 'runmate-cd9c7',
+    databaseURL: 'https://runmate-cd9c7-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'runmate-cd9c7.firebasestorage.app',
   );
 
@@ -62,6 +63,7 @@ class DefaultFirebaseOptions {
     appId: '1:6348589724:ios:ee662660e0848340d17b59',
     messagingSenderId: '6348589724',
     projectId: 'runmate-cd9c7',
+    databaseURL: 'https://runmate-cd9c7-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'runmate-cd9c7.firebasestorage.app',
     iosBundleId: 'com.example.runmate',
   );
