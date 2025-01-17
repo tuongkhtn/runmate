@@ -111,6 +111,7 @@ class RunRepository extends BaseRepository {
           .orderBy('date', descending: true)
           .limit(1)
           .get();
+      if (querySnapshot.docs.isEmpty) return null;
       return querySnapshot.docs
           .map((doc) {
             Run run = Run.fromJson(doc.data() as Map<String, dynamic>);
