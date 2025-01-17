@@ -3,7 +3,6 @@ import "package:cloud_firestore/cloud_firestore.dart";
 import 'package:flutter/material.dart';
 import "package:firebase_core/firebase_core.dart";
 import "package:provider/provider.dart";
-import "package:runmate/firebase_options.dart";
 import "package:runmate/initialize_data.dart";
 import "common/providers/user_id_provider.dart";
 import "features/onboarding/screens/get_started_screen.dart";
@@ -11,17 +10,18 @@ import "features/auth/screens/login_screen.dart";
 import "features/auth/screens/register_screen.dart";
 import "features/profile/screens/profile_screen.dart";
 import "features/test_screen.dart";
-import 'package:provider/provider.dart';
-import 'common/providers/user_id_provider.dart';
 import 'common/widgets/custom_bottom_navbar.dart';
+import "package:firebase_app_check/firebase_app_check.dart";
 
 const bool USE_EMULATOR = false;
-const bool INITIALIZE_FIREBASE = false;
+const bool INITIALIZE_FIREBASE = true;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
+  await Firebase.initializeApp();
+
+  await FirebaseAppCheck.instance.activate(
+    androidProvider: AndroidProvider.playIntegrity,
   );
 
   if (USE_EMULATOR) {
@@ -70,7 +70,7 @@ class MyApp extends StatelessWidget {
         '/home': (context) =>
             const CustomBottomNavbar(), // ProfileScreen sẽ nhận arguments
       },
-      initialRoute: '/',
+      initialRoute: '/home',
     );
   }
 }

@@ -539,7 +539,7 @@ class InitializeFirebase {
           totalDistance: 0.0,
         ));
 
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 3; i++) {
           await _runRepository.addRun(Run(
             userId: user.id!,
             challengeId: challenge.id,
