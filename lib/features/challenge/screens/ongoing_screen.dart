@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:runmate/common/utils/constants.dart';
+import 'package:runmate/repositories/participant_repository.dart';
 import 'package:runmate/repositories/user_repository.dart';
 import 'package:runmate/models/challenge.dart';
 import 'package:runmate/common/utils/date_formatter.dart';
@@ -14,7 +15,7 @@ class OngoingList extends StatefulWidget {
 }
 
 class _OngoingListState extends State<OngoingList> {
-  final UserRepository _userRepository = UserRepository();
+  final ParticipantRepository _participantRepository = ParticipantRepository();
   bool _isLoading = true; // Trạng thái loading
   List<Challenge> _challenges = []; // Danh sách challenge
 
@@ -27,9 +28,9 @@ class _OngoingListState extends State<OngoingList> {
   Future<void> _fetchChallenges() async {
     try {
       // Gọi hàm từ UserRepository
-      final challenges = await _userRepository.getChallengesByStatusAndUserId(
+      final challenges = await _participantRepository.getChallengesByStatusAndUserId(
         ChallengeStatusEnum.ongoing, // Thay bằng trạng thái phù hợp
-        "oHGgNYj8dXV7KR5PfW3z"
+        "SqhUBChJjWwJq5tvdf8P"
       );
       setState(() {
         _challenges = challenges;
@@ -52,6 +53,34 @@ class _OngoingListState extends State<OngoingList> {
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
         backgroundColor: kSecondaryColor,
+      );
+    }
+
+    if (_challenges.isEmpty) {
+      return Container(
+        color: kSecondaryColor, // Đặt màu nền (thay bằng màu bạn muốn)
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Biểu tượng
+              Icon(
+                Icons.emoji_people, // Biểu tượng hộp trống
+                size: 80,
+                color: Colors.grey[400],
+              ),
+              SizedBox(height: 16),
+              // Dòng thông báo
+              Text(
+                'No challenges on-going now. Let\'s join some!',
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
       );
     }
 

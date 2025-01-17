@@ -4,6 +4,7 @@ import "package:cloud_firestore/cloud_firestore.dart";
 import 'package:flutter/material.dart';
 import "package:firebase_core/firebase_core.dart";
 import "package:provider/provider.dart";
+import "package:runmate/features/challenge/screens/challenge_screen.dart";
 import "package:runmate/firebase_options.dart";
 import "package:runmate/initialize_data.dart";
 import "common/providers/user_id_provider.dart";
@@ -65,8 +66,9 @@ class MyApp extends StatelessWidget {
           '/profile': (context) => const ProfileScreen(),
        //   '/let_run': (context) => const RunScreen(),
           '/test': (context) => const UserFormScreen(),
+          '/challenge': (context) => const ChallengeScreen(),
       },
-        initialRoute: '/',
+        initialRoute: '/challenge',
     );
   }
 }
