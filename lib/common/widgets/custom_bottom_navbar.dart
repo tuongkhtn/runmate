@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import "../../features/profile/screens/profile_screen.dart";
+import "../../features/challenge/screens/challenge_screen.dart";
 import "../utils/constants.dart";
 
 class CustomBottomNavbar extends StatefulWidget {
@@ -14,7 +15,7 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
 
   final List<Widget> _pages = [
     const ProfileScreen(),
-    const ProfileScreen(),
+    const ChallengeScreen(),
     const ProfileScreen(),
   ];
 
