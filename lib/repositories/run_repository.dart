@@ -104,7 +104,7 @@ class RunRepository extends BaseRepository {
     }
   }
 
-  Future<Run> getRunLatestByUserId(String userId) async {
+  Future<Run?> getRunLatestByUserId(String userId) async {
     try {
       final querySnapshot = await collection
           .where('userId', isEqualTo: userId)
