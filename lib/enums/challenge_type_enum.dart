@@ -1,4 +1,4 @@
 enum ChallengeTypeEnum {
-  PUBLIC,
-  PRIVATE,
+  public,
+  private,
 }

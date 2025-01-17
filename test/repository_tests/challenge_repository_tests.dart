@@ -26,8 +26,8 @@ void main() {
       DateTime? startDate,
       DateTime? endDate,
       double goalDistance = 100.0,
-      ChallengeStatusEnum status = ChallengeStatusEnum.ONGOING,
-      ChallengeTypeEnum type = ChallengeTypeEnum.PUBLIC,
+      ChallengeStatusEnum status = ChallengeStatusEnum.ongoing,
+      ChallengeTypeEnum type = ChallengeTypeEnum.public,
       int totalNumberOfParticipants = 0,
     }) {
       return Challenge(
@@ -114,32 +114,32 @@ void main() {
 
     test('getChallengesByStatus returns challenges with matching status', () async {
       await challengeRepository.createChallenge(
-          createTestChallenge(status: ChallengeStatusEnum.ONGOING)
+          createTestChallenge(status: ChallengeStatusEnum.ongoing)
       );
       await challengeRepository.createChallenge(
-          createTestChallenge(status: ChallengeStatusEnum.COMPLETED)
+          createTestChallenge(status: ChallengeStatusEnum.completed)
       );
 
       final ongoingChallenges = await challengeRepository.getChallengesByStatus(
-          ChallengeStatusEnum.ONGOING
+          ChallengeStatusEnum.ongoing
       );
       expect(ongoingChallenges.length, 1);
-      expect(ongoingChallenges.first.status, ChallengeStatusEnum.ONGOING);
+      expect(ongoingChallenges.first.status, ChallengeStatusEnum.ongoing);
     });
 
     test('getChallengesByType returns challenges with matching type', () async {
       await challengeRepository.createChallenge(
-          createTestChallenge(type: ChallengeTypeEnum.PUBLIC)
+          createTestChallenge(type: ChallengeTypeEnum.public)
       );
       await challengeRepository.createChallenge(
-          createTestChallenge(type: ChallengeTypeEnum.PRIVATE)
+          createTestChallenge(type: ChallengeTypeEnum.private)
       );
 
       final publicChallenges = await challengeRepository.getChallengesByType(
-          ChallengeTypeEnum.PUBLIC
+          ChallengeTypeEnum.public
       );
       expect(publicChallenges.length, 1);
-      expect(publicChallenges.first.type, ChallengeTypeEnum.PUBLIC);
+      expect(publicChallenges.first.type, ChallengeTypeEnum.public);
     });
 
 
@@ -249,15 +249,15 @@ void main() {
 
     test('updateStatus successfully updates challenge status', () async {
       final challenge = await challengeRepository.createChallenge(
-          createTestChallenge(status: ChallengeStatusEnum.ONGOING)
+          createTestChallenge(status: ChallengeStatusEnum.ongoing)
       );
 
       final updatedChallenge = await challengeRepository.updateStatus(
           challenge.id!,
-          ChallengeStatusEnum.COMPLETED
+          ChallengeStatusEnum.completed
       );
 
-      expect(updatedChallenge.status, ChallengeStatusEnum.COMPLETED);
+      expect(updatedChallenge.status, ChallengeStatusEnum.completed);
 
       // Verify in Firestore
       final doc = await challengesCollection.doc(challenge.id).get();
@@ -269,7 +269,7 @@ void main() {
 
     test('updateStatus updates through all possible status values', () async {
       final challenge = await challengeRepository.createChallenge(
-          createTestChallenge(status: ChallengeStatusEnum.ONGOING)
+          createTestChallenge(status: ChallengeStatusEnum.ongoing)
       );
 
       // Test all status transitions
@@ -290,7 +290,7 @@ void main() {
       expect(
               () => challengeRepository.updateStatus(
               'non-existent-id',
-              ChallengeStatusEnum.COMPLETED
+              ChallengeStatusEnum.completed
           ),
           throwsException
       );
@@ -298,15 +298,15 @@ void main() {
 
     test('updateType successfully updates challenge type', () async {
       final challenge = await challengeRepository.createChallenge(
-          createTestChallenge(type: ChallengeTypeEnum.PUBLIC)
+          createTestChallenge(type: ChallengeTypeEnum.public)
       );
 
       final updatedChallenge = await challengeRepository.updateType(
           challenge.id!,
-          ChallengeTypeEnum.PRIVATE
+          ChallengeTypeEnum.private
       );
 
-      expect(updatedChallenge.type, ChallengeTypeEnum.PRIVATE);
+      expect(updatedChallenge.type, ChallengeTypeEnum.private);
 
       // Verify in Firestore
       final doc = await challengesCollection.doc(challenge.id).get();
@@ -318,7 +318,7 @@ void main() {
 
     test('updateType updates through all possible type values', () async {
       final challenge = await challengeRepository.createChallenge(
-          createTestChallenge(type: ChallengeTypeEnum.PUBLIC)
+          createTestChallenge(type: ChallengeTypeEnum.public)
       );
 
       // Test all type transitions
@@ -339,7 +339,7 @@ void main() {
       expect(
               () => challengeRepository.updateType(
               'non-existent-id',
-              ChallengeTypeEnum.PRIVATE
+              ChallengeTypeEnum.private
           ),
           throwsException
       );
@@ -348,26 +348,26 @@ void main() {
     test('updateType followed by updateStatus maintains both values', () async {
       final challenge = await challengeRepository.createChallenge(
           createTestChallenge(
-              type: ChallengeTypeEnum.PUBLIC,
-              status: ChallengeStatusEnum.ONGOING
+              type: ChallengeTypeEnum.public,
+              status: ChallengeStatusEnum.ongoing
           )
       );
 
       // Update type first
       final typeUpdated = await challengeRepository.updateType(
           challenge.id!,
-          ChallengeTypeEnum.PRIVATE
+          ChallengeTypeEnum.private
       );
-      expect(typeUpdated.type, ChallengeTypeEnum.PRIVATE);
-      expect(typeUpdated.status, ChallengeStatusEnum.ONGOING);
+      expect(typeUpdated.type, ChallengeTypeEnum.private);
+      expect(typeUpdated.status, ChallengeStatusEnum.ongoing);
 
       // Then update status
       final bothUpdated = await challengeRepository.updateStatus(
           challenge.id!,
-          ChallengeStatusEnum.COMPLETED
+          ChallengeStatusEnum.completed
       );
-      expect(bothUpdated.type, ChallengeTypeEnum.PRIVATE);
-      expect(bothUpdated.status, ChallengeStatusEnum.COMPLETED);
+      expect(bothUpdated.type, ChallengeTypeEnum.private);
+      expect(bothUpdated.status, ChallengeStatusEnum.completed);
     });
   });
 }

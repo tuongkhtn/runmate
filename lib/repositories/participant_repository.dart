@@ -1,7 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../enums/challenge_status_enum.dart';
-import '../enums/challenge_type_enum.dart';
-import '../models/challenge.dart';
 import '../models/participant.dart';
 import 'base_repository.dart';
 import 'challenge_repository.dart';
@@ -14,9 +11,9 @@ class ParticipantRepository extends BaseRepository {
       : challengeRepository = ChallengeRepository(),
         collection = FirebaseFirestore.instance.collection('participants');
 
-  ParticipantRepository.withMockFirestore(FirebaseFirestore firestore, {required this.challengeRepository})
+  ParticipantRepository.withMockFirestore(super.firestore, this.challengeRepository)
       : collection = firestore.collection('participants'),
-        super.withMockFirestore(firestore);
+        super.withMockFirestore();
 
   Future<Participant> addParticipant(Participant participant) async {
     try {
@@ -87,62 +84,6 @@ class ParticipantRepository extends BaseRepository {
       }).toList();
     } catch (e) {
       throw Exception('Error getting participants by challenge ID: $e');
-    }
-  }
-
-  Future<List<Challenge>> getChallengesByTypeAndUserId(ChallengeTypeEnum type, String participantId) async {
-    try
-    {
-      List<Challenge> challenges = await challengeRepository.getChallengesByType(type);
-      List<Participant> participants = await getParticipantsByUserId(participantId);
-      List<Challenge> userChallenges = [];
-      for (var challenge in challenges) {
-        for (var participant in participants) {
-          if (challenge.id == participant.challengeId) {
-            userChallenges.add(challenge);
-          }
-        }
-      }
-      return userChallenges;
-    }
-    catch (e) {
-      throw Exception('Error getting challenges by type and user ID: $e');
-    }
-  }
-
-  Future<List<Challenge>> getChallengesByStatusAndUserId(ChallengeStatusEnum status, String participantId) async {
-    try {
-      List<Challenge> challenges = await challengeRepository.getChallengesByStatus(status);
-      List<Participant> participants = await getParticipantsByUserId(participantId);
-      List<Challenge> userChallenges = [];
-      for (var challenge in challenges) {
-        for (var participant in participants) {
-          if (challenge.id == participant.challengeId) {
-            userChallenges.add(challenge);
-          }
-        }
-      }
-      return userChallenges;
-    } catch (e) {
-      throw Exception('Error getting challenges by status and user ID: $e');
-    }
-  }
-
-  Future<List<Challenge>> getChallengesByTypeAndUserIdAndStatus(ChallengeTypeEnum type, String participantId, ChallengeStatusEnum status) async {
-    try {
-      List<Challenge> challenges = await challengeRepository.getChallengesByType(type);
-      List<Participant> participants = await getParticipantsByUserId(participantId);
-      List<Challenge> userChallenges = [];
-      for (var challenge in challenges) {
-        for (var participant in participants) {
-          if (challenge.id == participant.challengeId && challenge.status == status) {
-            userChallenges.add(challenge);
-          }
-        }
-      }
-      return userChallenges;
-    } catch (e) {
-      throw Exception('Error getting challenges by type, user ID, and status: $e');
     }
   }
 

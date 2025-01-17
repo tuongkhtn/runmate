@@ -1,4 +1,4 @@
 enum ChallengeStatusEnum {
-  ONGOING,
-  COMPLETED,
+  ongoing,
+  completed,
 }

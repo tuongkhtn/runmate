@@ -7,9 +7,9 @@ class RunRepository extends BaseRepository {
 
   RunRepository() : collection = FirebaseFirestore.instance.collection('runs');
 
-  RunRepository.withMockFirestore(FirebaseFirestore firestore)
+  RunRepository.withMockFirestore(super.firestore)
       : collection = firestore.collection('runs'),
-        super.withMockFirestore(firestore);
+        super.withMockFirestore();
 
   Future<Run> addRun(Run run) async {
     try {

@@ -23,8 +23,8 @@ class Challenge {
     required this.startDate,
     required this.endDate,
     required this.goalDistance,
-    this.status = ChallengeStatusEnum.ONGOING,
-    this.type = ChallengeTypeEnum.PUBLIC,
+    this.status = ChallengeStatusEnum.ongoing,
+    this.type = ChallengeTypeEnum.public,
     this.totalNumberOfParticipants = 0,
     DateTime? createdAt,
   }) : createdAt = createdAt ?? DateTime.now();

@@ -1,34 +1,37 @@
+import 'package:runmate/enums/invitation_status_enum.dart';
+
 class Invitation {
-  final String? invitationId;
+  String? id;
   final String challengeId;
+  final String inviteeId;
   final String email;
-  final String status;
+  final InvitationStatusEnum status;
   final DateTime sentAt;
 
   Invitation({
-    this.invitationId,
     required this.challengeId,
+    required this.inviteeId,
     required this.email,
     required this.status,
-    required this.sentAt,
-  });
+    DateTime? sentAt,
+  }) : sentAt = sentAt ?? DateTime.now();
 
   factory Invitation.fromJson(Map<String, dynamic> json) {
     return Invitation(
-      invitationId: json['invitationId'] as String,
       challengeId: json['challengeId'] as String,
+      inviteeId: json['inviteeId'] as String,
       email: json['email'] as String,
-      status: json['status'] as String,
+      status: InvitationStatusEnum.values.firstWhere((e) => e.toString() == "InvitationStatusEnum.${json['status']}"),
       sentAt: DateTime.parse(json['sentAt'] as String),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'invitationId': invitationId,
       'challengeId': challengeId,
+      'inviteeId': inviteeId,
       'email': email,
-      'status': status,
+      'status': status.toString().split('.').last,
       'sentAt': sentAt.toIso8601String(),
     };
   }

@@ -38,6 +38,7 @@ class Run {
   final double averagePace; // minutes per kilometer
   final double averageSpeed; // kilometers per hour
   final List<LatLngPoint> route;
+  final DateTime createdAt;
 
   Run({
     required this.userId,
@@ -50,7 +51,8 @@ class Run {
     this.averagePace = 0,
     this.averageSpeed = 0,
     this.route = const [],
-  });
+    DateTime? createdAt,
+  }) : createdAt = createdAt ?? DateTime.now();
 
   factory Run.fromJson(Map<String, dynamic> json) {
     return Run(
@@ -66,6 +68,7 @@ class Run {
       route: (json['route'] as List)
           .map((point) => LatLngPoint.fromJson(point))
           .toList(),
+      createdAt: DateTime.parse(json['createdAt']),
     );
   }
 
@@ -81,6 +84,7 @@ class Run {
       'averagePace': averagePace,
       'averageSpeed': averageSpeed,
       'route': route.map((point) => point.toJson()).toList(),
+      'createdAt': createdAt.toIso8601String(),
     };
   }
 }

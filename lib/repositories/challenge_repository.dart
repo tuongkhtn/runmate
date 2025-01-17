@@ -10,9 +10,9 @@ class ChallengeRepository extends BaseRepository {
   ChallengeRepository()
       : collection = FirebaseFirestore.instance.collection('challenges');
 
-  ChallengeRepository.withMockFirestore(FirebaseFirestore firestore)
+  ChallengeRepository.withMockFirestore(super.firestore)
       : collection = firestore.collection('challenges'),
-        super.withMockFirestore(firestore);
+        super.withMockFirestore();
 
   Future<Challenge> createChallenge(Challenge challenge) async {
     try {
