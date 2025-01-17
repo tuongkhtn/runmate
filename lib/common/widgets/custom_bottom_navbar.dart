@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import "package:runmate/features/let_run/screens/run_screen.dart";
+import "package:runmate/features/home/screens/home_screen.dart";
 import "../../features/profile/screens/profile_screen.dart";
 import "../../features/challenge/screens/challenge_screen.dart";
 import "../utils/constants.dart";
@@ -14,7 +16,8 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
-    const ProfileScreen(),
+    const HomeScreen(),
+    const RunScreen(),
     const ChallengeScreen(),
     const ProfileScreen(),
   ];
@@ -30,6 +33,7 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
     return Scaffold(
       body: _pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         currentIndex: _currentIndex,
         onTap: _onTap,
         backgroundColor: kSecondaryColor,
@@ -39,6 +43,10 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.directions_run),
+            label: 'Let\'s Run',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.flag),

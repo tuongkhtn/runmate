@@ -125,6 +125,86 @@ class RunRepository extends BaseRepository {
     }
   }
 
+  Future<Map<String, dynamic>> getStatsInKDaysByUserId(String? userId, int k) async {
+    try {
+      if (userId == null) {
+        throw Exception(
+            'Error getting stats in $k days by user ID: user ID is null');
+      }
+
+      final querySnapshot = await collection
+          .where('userId', isEqualTo: userId)
+          .where('date',
+          isGreaterThanOrEqualTo: DateTime.now().subtract(Duration(days: k)))
+          .orderBy('date', descending: true)
+          .get();
+      final runs = querySnapshot.docs
+          .map((doc) {
+        Run run = Run.fromJson(doc.data() as Map<String, dynamic>);
+        run.id = doc.id;
+        return run;
+      }).toList();
+
+      // Calculate totals
+      double totalDistance = runs.fold(0, (prev, run) => prev + run.distance);
+      int totalDuration = runs.fold(0, (prev, run) => prev + run.duration);
+      int totalSteps = runs.fold(0, (prev, run) => prev + run.steps);
+      double totalCalories = runs.fold(
+          0.0, (prev, run) => prev + run.calories);
+      double averagePace = runs.isNotEmpty ? runs.fold(
+          0.0, (prev, run) => prev + run.averagePace) / runs.length : 0.0;
+      double averageSpeed = runs.isNotEmpty ? runs.fold(
+          0.0, (prev, run) => prev + run.averageSpeed) / runs.length : 0.0;
+
+      // Group runs by date
+      Map<String, List<Run>> runsByDate = {};
+      for (Run run in runs) {
+        String dateKey = run.date.toIso8601String().split(
+            'T')[0]; // Extract the date (YYYY-MM-DD)
+        if (!runsByDate.containsKey(dateKey)) {
+          runsByDate[dateKey] = [];
+        }
+        runsByDate[dateKey]!.add(run);
+      }
+
+      // Calculate average steps for each day
+      List<Map<String, dynamic>> averageStepsPerDay = [];
+      for (int i = 0; i < k; i++) {
+        String date = DateTime.now()
+            .subtract(Duration(days: i))
+            .toIso8601String()
+            .split('T')[0];
+        if (runsByDate.containsKey(date)) {
+          List<Run> runsForDate = runsByDate[date]!;
+          int totalStepsForDate = runsForDate.fold(
+              0, (prev, run) => prev + run.steps);
+          double averageStepsForDate = totalStepsForDate / runsForDate.length;
+          averageStepsPerDay.add({
+            'date': date,
+            'averageSteps': averageStepsForDate,
+          });
+        } else {
+          averageStepsPerDay.add({
+            'date': date,
+            'averageSteps': 0.0,
+          });
+        }
+      }
+
+      return {
+        'totalDistance': totalDistance,
+        'totalDuration': totalDuration,
+        'totalSteps': totalSteps,
+        'totalCalories': totalCalories,
+        'averagePace': averagePace,
+        'averageSpeed': averageSpeed,
+        'averageStepsPerDay': averageStepsPerDay, // Add the new list here
+      };
+    } catch (e) {
+      throw Exception('Error getting stats in $k days by user ID: $e');
+    }
+  }
+
   Future<List<Run>> getTopKRunsLatestByUserId(String userId, int k) async {
     try {
       final querySnapshot = await collection
@@ -283,58 +363,14 @@ class RunRepository extends BaseRepository {
 
   Future<int> getStreakByUserID(String userID) async {
     try {
-      final now = DateTime.now();
-      // Start of today (midnight)
-      final today = DateTime(now.year, now.month, now.day);
-
       final querySnapshot = await collection
           .where('userId', isEqualTo: userID)
-          .orderBy('date', descending: true)
           .get();
 
-      if (querySnapshot.docs.isEmpty) return 0;
+      return querySnapshot.docs.length;
 
-      int streak = 0;
-      DateTime? lastDate;
-
-      for (var doc in querySnapshot.docs) {
-        final run = Run.fromJson(doc.data() as Map<String, dynamic>);
-        // Convert run date to start of day for comparison
-        final runDate = DateTime(
-            run.date.year,
-            run.date.month,
-            run.date.day
-        );
-
-        // Initialize streak if this is first run
-        if (lastDate == null) {
-          // Only count if run is today or yesterday
-          if (today.difference(runDate).inDays <= 1) {
-            streak = 1;
-            lastDate = runDate;
-            continue;
-          } else {
-            // First run is older than yesterday - no active streak
-            return 0;
-          }
-        }
-
-        // Check if this run is consecutive with last run
-        if (lastDate.difference(runDate).inDays == 1) {
-          streak++;
-          lastDate = runDate;
-        } else if (lastDate.difference(runDate).inDays == 0) {
-          // Multiple runs same day - ignore
-          continue;
-        } else {
-          // Gap found - end streak count
-          break;
-        }
-      }
-
-      return streak;
     } catch (e) {
-      throw Exception('Error getting streak by user ID: $e');
+      throw Exception('Error getting run count by user ID: $e');
     }
   }
   }

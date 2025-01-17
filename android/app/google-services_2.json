@@ -1,13 +1,14 @@
 {
   "project_info": {
-    "project_number": "963490406645",
-    "project_id": "runmate-53e1f",
-    "storage_bucket": "runmate-53e1f.firebasestorage.app"
+    "project_number": "6348589724",
+    "firebase_url": "https://runmate-cd9c7-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "runmate-cd9c7",
+    "storage_bucket": "runmate-cd9c7.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:963490406645:android:86843b00d127531b86e5bc",
+        "mobilesdk_app_id": "1:6348589724:android:822f437f90e5dc66d17b59",
         "android_client_info": {
           "package_name": "com.example.runmate"
         }
@@ -15,7 +16,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyA_PlP2RoWuSJFD0BuDatjdri2QzRB261w"
+          "current_key": "AIzaSyC6QSlJFHeCNPdSeJw0ufVVbKvxNgeUuzs"
         }
       ],
       "services": {

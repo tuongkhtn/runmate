@@ -2,13 +2,16 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:runmate/models/challenge.dart';
 import 'package:runmate/repositories/challenge_repository.dart';
+import 'package:runmate/repositories/invitation_repository.dart';
 import 'package:runmate/repositories/participant_repository.dart';
 import 'package:runmate/repositories/run_repository.dart';
 import 'package:runmate/repositories/user_repository.dart';
 
 import 'enums/challenge_status_enum.dart';
 import 'enums/challenge_type_enum.dart';
+import 'enums/invitation_status_enum.dart';
 import 'firebase_options.dart';
+import 'models/invitation.dart';
 import 'models/participant.dart';
 import 'models/run.dart';
 import 'models/user.dart';
@@ -18,6 +21,7 @@ class InitializeFirebase {
   static final ChallengeRepository _challengeRepository = ChallengeRepository();
   static final ParticipantRepository _participantRepository = ParticipantRepository();
   static final RunRepository _runRepository = RunRepository();
+  static final InvitationRepository _invitationRepository = InvitationRepository();
 
   static Future<void> initialize() async {
     WidgetsFlutterBinding.ensureInitialized();
@@ -25,16 +29,17 @@ class InitializeFirebase {
       options: DefaultFirebaseOptions.currentPlatform,
     );
 
-    await _initializeUser();
-    await _initializeChallenge();
-    await _initializeParticipant();
-    await _initializeRun();
+    await _initializeUsers();
+    await _initializeChallenges();
+    await _initializeParticipants();
+    await _initializeRuns();
+    await _initializeInvitations();
   }
 
-  static Future<void> _initializeUser() async {
+  static Future<void> _initializeUsers() async {
     _userRepository.createUser(User(
-      name: "John Doe",
-      email: "johndoe@gmail.com",
+      name: "Admin",
+      email: "admin@gmail.com",
       avatarUrl: "https://example.com/avatar.jpg",
       totalDistance: 0.0,
       totalTime: 0,
@@ -86,88 +91,11 @@ class InitializeFirebase {
       address: "202 Maple St, Springfield, IL 62705",
       dateOfBirth: DateTime(1992, 4, 4),
     ));
-
-    _userRepository.createUser(User(
-      name: "David Wilson",
-      email: "davidwilson@gmail.com",
-      avatarUrl: "https://example.com/avatar.jpg",
-      totalDistance: 0.0,
-      totalTime: 0,
-      phoneNumber: "1231231234",
-      address: "303 Birch St, Springfield, IL 62706",
-      dateOfBirth: DateTime(1991, 5, 5),
-    ));
-
-    _userRepository.createUser(User(
-      name: "Eve Davis",
-      email: "evedavis@gmail.com",
-      avatarUrl: "https://example.com/avatar.jpg",
-      totalDistance: 0.0,
-      totalTime: 0,
-      phoneNumber: "2342342345",
-      address: "404 Cedar St, Springfield, IL 62707",
-      dateOfBirth: DateTime(1993, 6, 6),
-    ));
-
-    _userRepository.createUser(User(
-      name: "Frank Miller",
-      email: "frankmiller@gmail.com",
-      avatarUrl: "https://example.com/avatar.jpg",
-      totalDistance: 0.0,
-      totalTime: 0,
-      phoneNumber: "3453453456",
-      address: "505 Walnut St, Springfield, IL 62708",
-      dateOfBirth: DateTime(1989, 7, 7),
-    ));
-
-    _userRepository.createUser(User(
-      name: "Grace Lee",
-      email: "gracelee@gmail.com",
-      avatarUrl: "https://example.com/avatar.jpg",
-      totalDistance: 0.0,
-      totalTime: 0,
-      phoneNumber: "4564564567",
-      address: "606 Chestnut St, Springfield, IL 62709",
-      dateOfBirth: DateTime(1994, 8, 8),
-    ));
-
-    _userRepository.createUser(User(
-      name: "Hank Green",
-      email: "hankgreen@gmail.com",
-      avatarUrl: "https://example.com/avatar.jpg",
-      totalDistance: 0.0,
-      totalTime: 0,
-      phoneNumber: "5675675678",
-      address: "707 Ash St, Springfield, IL 62710",
-      dateOfBirth: DateTime(1996, 9, 9),
-    ));
-
-    _userRepository.createUser(User(
-      name: "Ivy White",
-      email: "ivywhite@gmail.com",
-      avatarUrl: "https://example.com/avatar.jpg",
-      totalDistance: 0.0,
-      totalTime: 0,
-      phoneNumber: "6786786789",
-      address: "808 Poplar St, Springfield, IL 62711",
-      dateOfBirth: DateTime(1997, 10, 10),
-    ));
-
-    _userRepository.createUser(User(
-      name: "Jack Black",
-      email: "jackblack@gmail.com",
-      avatarUrl: "https://example.com/avatar.jpg",
-      totalDistance: 0.0,
-      totalTime: 0,
-      phoneNumber: "7897897890",
-      address: "909 Willow St, Springfield, IL 62712",
-      dateOfBirth: DateTime(1998, 11, 11),
-    ));
   }
 
-  static Future<void> _initializeChallenge() async {
+  static Future<void> _initializeChallenges() async {
     _challengeRepository.createChallenge(Challenge(
-      ownerId: (await _userRepository.getUserByEmail("johndoe@gmail.com")).id!,
+      ownerId: (await _userRepository.getUserByEmail("admin@gmail.com")).id!,
       name: "Challenge 1",
       description: "Description 1",
       longDescription: "Long Description 1",
@@ -227,7 +155,7 @@ class InitializeFirebase {
     ));
 
     _challengeRepository.createChallenge(Challenge(
-      ownerId: (await _userRepository.getUserByEmail("davidwilson@gmail.com")).id!,
+      ownerId: (await _userRepository.getUserByEmail("admin@gmail.com")).id!,
       name: "Challenge 6",
       description: "Description 6",
       longDescription: "Long Description 6",
@@ -239,7 +167,7 @@ class InitializeFirebase {
     ));
 
     _challengeRepository.createChallenge(Challenge(
-      ownerId: (await _userRepository.getUserByEmail("evedavis@gmail.com")).id!,
+      ownerId: (await _userRepository.getUserByEmail("bobjohnson@gmail.com")).id!,
       name: "Challenge 7",
       description: "Description 7",
       longDescription: "Long Description 7",
@@ -251,7 +179,7 @@ class InitializeFirebase {
     ));
 
     _challengeRepository.createChallenge(Challenge(
-      ownerId: (await _userRepository.getUserByEmail("frankmiller@gmail.com")).id!,
+      ownerId: (await _userRepository.getUserByEmail("charliebrown@gmail.com")).id!,
       name: "Challenge 8",
       description: "Description 8",
       longDescription: "Long Description 8",
@@ -263,7 +191,7 @@ class InitializeFirebase {
     ));
 
     _challengeRepository.createChallenge(Challenge(
-      ownerId: (await _userRepository.getUserByEmail("gracelee@gmail.com")).id!,
+      ownerId: (await _userRepository.getUserByEmail("alicesmith@gmail.com")).id!,
       name: "Challenge 9",
       description: "Description 9",
       longDescription: "Long Description 9",
@@ -275,7 +203,7 @@ class InitializeFirebase {
     ));
 
     _challengeRepository.createChallenge(Challenge(
-      ownerId: (await _userRepository.getUserByEmail("hankgreen@gmail.com")).id!,
+      ownerId: (await _userRepository.getUserByEmail("janedoe@gmail.com")).id!,
       name: "Challenge 10",
       description: "Description 10",
       longDescription: "Long Description 10",
@@ -287,7 +215,7 @@ class InitializeFirebase {
     ));
 
     _challengeRepository.createChallenge(Challenge(
-      ownerId: (await _userRepository.getUserByEmail("ivywhite@gmail.com")).id!,
+      ownerId: (await _userRepository.getUserByEmail("admin@gmail.com")).id!,
       name: "Challenge 11",
       description: "Description 11",
       longDescription: "Long Description 11",
@@ -299,7 +227,7 @@ class InitializeFirebase {
     ));
 
     _challengeRepository.createChallenge(Challenge(
-      ownerId: (await _userRepository.getUserByEmail("jackblack@gmail.com")).id!,
+      ownerId: (await _userRepository.getUserByEmail("bobjohnson@gmail.com")).id!,
       name: "Challenge 12",
       description: "Description 12",
       longDescription: "Long Description 12",
@@ -311,7 +239,7 @@ class InitializeFirebase {
     ));
 
     _challengeRepository.createChallenge(Challenge(
-      ownerId: (await _userRepository.getUserByEmail("johndoe@gmail.com")).id!,
+      ownerId: (await _userRepository.getUserByEmail("admin@gmail.com")).id!,
       name: "Challenge 13",
       description: "Description 13",
       longDescription: "Long Description 13",
@@ -371,7 +299,7 @@ class InitializeFirebase {
     ));
 
     _challengeRepository.createChallenge(Challenge(
-      ownerId: (await _userRepository.getUserByEmail("davidwilson@gmail.com")).id!,
+      ownerId: (await _userRepository.getUserByEmail("admin@gmail.com")).id!,
       name: "Challenge 18",
       description: "Description 18",
       longDescription: "Long Description 18",
@@ -383,7 +311,7 @@ class InitializeFirebase {
     ));
 
     _challengeRepository.createChallenge(Challenge(
-      ownerId: (await _userRepository.getUserByEmail("evedavis@gmail.com")).id!,
+      ownerId: (await _userRepository.getUserByEmail("janedoe@gmail.com")).id!,
       name: "Challenge 19",
       description: "Description 19",
       longDescription: "Long Description 19",
@@ -395,7 +323,7 @@ class InitializeFirebase {
     ));
 
     _challengeRepository.createChallenge(Challenge(
-      ownerId: (await _userRepository.getUserByEmail("frankmiller@gmail.com")).id!,
+      ownerId: (await _userRepository.getUserByEmail("alicesmith@gmail.com")).id!,
       name: "Challenge 20",
       description: "Description 20",
       longDescription: "Long Description 20",
@@ -407,129 +335,130 @@ class InitializeFirebase {
     ));
   }
 
-  static Future<void> _initializeParticipant() async {
-      final users = await Future.wait([
-        _userRepository.getUserByEmail("johndoe@gmail.com"),
-        _userRepository.getUserByEmail("janedoe@gmail.com"),
-        _userRepository.getUserByEmail("alicesmith@gmail.com"),
-        _userRepository.getUserByEmail("ivywhite@gmail.com"),
-        _userRepository.getUserByEmail("johndoe@gmail.com"),
-        _userRepository.getUserByEmail("jackblack@gmail.com"),
-        _userRepository.getUserByEmail("bobjohnson@gmail.com"),
-        _userRepository.getUserByEmail("charliebrown@gmail.com"),
-        _userRepository.getUserByEmail("davidwilson@gmail.com"),
-        _userRepository.getUserByEmail("jackblack@gmail.com"),
-        _userRepository.getUserByEmail("bobjohnson@gmail.com"),
-        _userRepository.getUserByEmail("frankmiller@gmail.com"),
-        _userRepository.getUserByEmail("davidwilson@gmail.com"),
-        _userRepository.getUserByEmail("janedoe@gmail.com"),
-        _userRepository.getUserByEmail("jackblack@gmail.com"),
-        _userRepository.getUserByEmail("janedoe@gmail.com"),
-        _userRepository.getUserByEmail("jackblack@gmail.com"),
-        _userRepository.getUserByEmail("evedavis@gmail.com"),
-        _userRepository.getUserByEmail("bobjohnson@gmail.com"),
-        _userRepository.getUserByEmail("ivywhite@gmail.com"),
-        _userRepository.getUserByEmail("gracelee@gmail.com"),
-        _userRepository.getUserByEmail("davidwilson@gmail.com"),
-        _userRepository.getUserByEmail("hankgreen@gmail.com"),
-        _userRepository.getUserByEmail("jackblack@gmail.com"),
-        _userRepository.getUserByEmail("jackblack@gmail.com"),
-        _userRepository.getUserByEmail("hankgreen@gmail.com"),
-        _userRepository.getUserByEmail("evedavis@gmail.com"),
-        _userRepository.getUserByEmail("frankmiller@gmail.com"),
-        _userRepository.getUserByEmail("evedavis@gmail.com"),
-        _userRepository.getUserByEmail("jackblack@gmail.com"),
-        _userRepository.getUserByEmail("hankgreen@gmail.com"),
-        _userRepository.getUserByEmail("jackblack@gmail.com"),
-        _userRepository.getUserByEmail("bobjohnson@gmail.com"),
-        _userRepository.getUserByEmail("jackblack@gmail.com"),
-        _userRepository.getUserByEmail("johndoe@gmail.com"),
-        _userRepository.getUserByEmail("ivywhite@gmail.com"),
-        _userRepository.getUserByEmail("ivywhite@gmail.com"),
-        _userRepository.getUserByEmail("evedavis@gmail.com"),
-        _userRepository.getUserByEmail("evedavis@gmail.com"),
-        _userRepository.getUserByEmail("hankgreen@gmail.com"),
-        _userRepository.getUserByEmail("frankmiller@gmail.com"),
-        _userRepository.getUserByEmail("hankgreen@gmail.com"),
-        _userRepository.getUserByEmail("johndoe@gmail.com"),
-        _userRepository.getUserByEmail("evedavis@gmail.com"),
-        _userRepository.getUserByEmail("frankmiller@gmail.com"),
-        _userRepository.getUserByEmail("evedavis@gmail.com"),
-        _userRepository.getUserByEmail("frankmiller@gmail.com"),
-        _userRepository.getUserByEmail("gracelee@gmail.com"),
-        _userRepository.getUserByEmail("hankgreen@gmail.com"),
-        _userRepository.getUserByEmail("ivywhite@gmail.com"),
-        _userRepository.getUserByEmail("jackblack@gmail.com"),
-      ]);
+  static Future<void> _initializeParticipants() async {
+    final users = await Future.wait([
+      _userRepository.getUserByEmail("admin@gmail.com"),
+      _userRepository.getUserByEmail("janedoe@gmail.com"),
+      _userRepository.getUserByEmail("alicesmith@gmail.com"),
+      _userRepository.getUserByEmail("admin@gmail.com"),
+      _userRepository.getUserByEmail("admin@gmail.com"),
+      _userRepository.getUserByEmail("bobjohnson@gmail.com"),
+      _userRepository.getUserByEmail("bobjohnson@gmail.com"),
+      _userRepository.getUserByEmail("charliebrown@gmail.com"),
+      _userRepository.getUserByEmail("admin@gmail.com"),
+      _userRepository.getUserByEmail("bobjohnson@gmail.com"),
+      _userRepository.getUserByEmail("bobjohnson@gmail.com"),
+      _userRepository.getUserByEmail("admin@gmail.com"),
+      _userRepository.getUserByEmail("admin@gmail.com"),
+      _userRepository.getUserByEmail("janedoe@gmail.com"),
+      _userRepository.getUserByEmail("bobjohnson@gmail.com"),
+      _userRepository.getUserByEmail("janedoe@gmail.com"),
+      _userRepository.getUserByEmail("bobjohnson@gmail.com"),
+      _userRepository.getUserByEmail("admin@gmail.com"),
+      _userRepository.getUserByEmail("bobjohnson@gmail.com"),
+      _userRepository.getUserByEmail("admin@gmail.com"),
+      _userRepository.getUserByEmail("alicesmith@gmail.com"),
+      _userRepository.getUserByEmail("admin@gmail.com"),
+      _userRepository.getUserByEmail("charliebrown@gmail.com"),
+      _userRepository.getUserByEmail("bobjohnson@gmail.com"),
+      _userRepository.getUserByEmail("bobjohnson@gmail.com"),
+      _userRepository.getUserByEmail("charliebrown@gmail.com"),
+      _userRepository.getUserByEmail("admin@gmail.com"),
+      _userRepository.getUserByEmail("admin@gmail.com"),
+      _userRepository.getUserByEmail("admin@gmail.com"),
+      _userRepository.getUserByEmail("bobjohnson@gmail.com"),
+      _userRepository.getUserByEmail("charliebrown@gmail.com"),
+      _userRepository.getUserByEmail("bobjohnson@gmail.com"),
+      _userRepository.getUserByEmail("bobjohnson@gmail.com"),
+      _userRepository.getUserByEmail("bobjohnson@gmail.com"),
+      _userRepository.getUserByEmail("admin@gmail.com"),
+      _userRepository.getUserByEmail("admin@gmail.com"),
+      _userRepository.getUserByEmail("admin@gmail.com"),
+      _userRepository.getUserByEmail("admin@gmail.com"),
+      _userRepository.getUserByEmail("admin@gmail.com"),
+      _userRepository.getUserByEmail("charliebrown@gmail.com"),
+      _userRepository.getUserByEmail("admin@gmail.com"),
+      _userRepository.getUserByEmail("charliebrown@gmail.com"),
+      _userRepository.getUserByEmail("admin@gmail.com"),
+      _userRepository.getUserByEmail("admin@gmail.com"),
+      _userRepository.getUserByEmail("admin@gmail.com"),
+      _userRepository.getUserByEmail("admin@gmail.com"),
+      _userRepository.getUserByEmail("admin@gmail.com"),
+      _userRepository.getUserByEmail("alicesmith@gmail.com"),
+      _userRepository.getUserByEmail("charliebrown@gmail.com"),
+      _userRepository.getUserByEmail("admin@gmail.com"),
+      _userRepository.getUserByEmail("bobjohnson@gmail.com"),
+    ]);
 
-      final challenges = await Future.wait([
-        _challengeRepository.getChallengeByName("Challenge 1"),
-        _challengeRepository.getChallengeByName("Challenge 2"),
-        _challengeRepository.getChallengeByName("Challenge 15"),
-        _challengeRepository.getChallengeByName("Challenge 3"),
-        _challengeRepository.getChallengeByName("Challenge 2"),
-        _challengeRepository.getChallengeByName("Challenge 4"),
-        _challengeRepository.getChallengeByName("Challenge 3"),
-        _challengeRepository.getChallengeByName("Challenge 1"),
-        _challengeRepository.getChallengeByName("Challenge 8"),
-        _challengeRepository.getChallengeByName("Challenge 5"),
-        _challengeRepository.getChallengeByName("Challenge 8"),
-        _challengeRepository.getChallengeByName("Challenge 6"),
-        _challengeRepository.getChallengeByName("Challenge 8"),
-        _challengeRepository.getChallengeByName("Challenge 3"),
-        _challengeRepository.getChallengeByName("Challenge 1"),
-        _challengeRepository.getChallengeByName("Challenge 8"),
-        _challengeRepository.getChallengeByName("Challenge 13"),
-        _challengeRepository.getChallengeByName("Challenge 7"),
-        _challengeRepository.getChallengeByName("Challenge 8"),
-        _challengeRepository.getChallengeByName("Challenge 12"),
-        _challengeRepository.getChallengeByName("Challenge 1"),
-        _challengeRepository.getChallengeByName("Challenge 3"),
-        _challengeRepository.getChallengeByName("Challenge 3"),
-        _challengeRepository.getChallengeByName("Challenge 8"),
-        _challengeRepository.getChallengeByName("Challenge 15"),
-        _challengeRepository.getChallengeByName("Challenge 2"),
-        _challengeRepository.getChallengeByName("Challenge 1"),
-        _challengeRepository.getChallengeByName("Challenge 8"),
-        _challengeRepository.getChallengeByName("Challenge 9"),
-        _challengeRepository.getChallengeByName("Challenge 10"),
-        _challengeRepository.getChallengeByName("Challenge 7"),
-        _challengeRepository.getChallengeByName("Challenge 1"),
-        _challengeRepository.getChallengeByName("Challenge 10"),
-        _challengeRepository.getChallengeByName("Challenge 2"),
-        _challengeRepository.getChallengeByName("Challenge 11"),
-        _challengeRepository.getChallengeByName("Challenge 8"),
-        _challengeRepository.getChallengeByName("Challenge 12"),
-        _challengeRepository.getChallengeByName("Challenge 20"),
-        _challengeRepository.getChallengeByName("Challenge 1"),
-        _challengeRepository.getChallengeByName("Challenge 19"),
-        _challengeRepository.getChallengeByName("Challenge 13"),
-        _challengeRepository.getChallengeByName("Challenge 6"),
-        _challengeRepository.getChallengeByName("Challenge 14"),
-        _challengeRepository.getChallengeByName("Challenge 13"),
-        _challengeRepository.getChallengeByName("Challenge 15"),
-        _challengeRepository.getChallengeByName("Challenge 16"),
-        _challengeRepository.getChallengeByName("Challenge 1"),
-        _challengeRepository.getChallengeByName("Challenge 17"),
-        _challengeRepository.getChallengeByName("Challenge 18"),
-        _challengeRepository.getChallengeByName("Challenge 13"),
-        _challengeRepository.getChallengeByName("Challenge 19"),
-        _challengeRepository.getChallengeByName("Challenge 20"),
-        _challengeRepository.getChallengeByName("Challenge 1"),
-      ]);
+    final challenges = await Future.wait([
+      _challengeRepository.getChallengeByName("Challenge 1"),
+      _challengeRepository.getChallengeByName("Challenge 2"),
+      _challengeRepository.getChallengeByName("Challenge 15"),
+      _challengeRepository.getChallengeByName("Challenge 3"),
+      _challengeRepository.getChallengeByName("Challenge 2"),
+      _challengeRepository.getChallengeByName("Challenge 4"),
+      _challengeRepository.getChallengeByName("Challenge 3"),
+      _challengeRepository.getChallengeByName("Challenge 1"),
+      _challengeRepository.getChallengeByName("Challenge 8"),
+      _challengeRepository.getChallengeByName("Challenge 5"),
+      _challengeRepository.getChallengeByName("Challenge 8"),
+      _challengeRepository.getChallengeByName("Challenge 6"),
+      _challengeRepository.getChallengeByName("Challenge 8"),
+      _challengeRepository.getChallengeByName("Challenge 3"),
+      _challengeRepository.getChallengeByName("Challenge 1"),
+      _challengeRepository.getChallengeByName("Challenge 8"),
+      _challengeRepository.getChallengeByName("Challenge 13"),
+      _challengeRepository.getChallengeByName("Challenge 7"),
+      _challengeRepository.getChallengeByName("Challenge 8"),
+      _challengeRepository.getChallengeByName("Challenge 12"),
+      _challengeRepository.getChallengeByName("Challenge 1"),
+      _challengeRepository.getChallengeByName("Challenge 3"),
+      _challengeRepository.getChallengeByName("Challenge 3"),
+      _challengeRepository.getChallengeByName("Challenge 8"),
+      _challengeRepository.getChallengeByName("Challenge 15"),
+      _challengeRepository.getChallengeByName("Challenge 2"),
+      _challengeRepository.getChallengeByName("Challenge 1"),
+      _challengeRepository.getChallengeByName("Challenge 8"),
+      _challengeRepository.getChallengeByName("Challenge 9"),
+      _challengeRepository.getChallengeByName("Challenge 10"),
+      _challengeRepository.getChallengeByName("Challenge 7"),
+      _challengeRepository.getChallengeByName("Challenge 1"),
+      _challengeRepository.getChallengeByName("Challenge 10"),
+      _challengeRepository.getChallengeByName("Challenge 2"),
+      _challengeRepository.getChallengeByName("Challenge 11"),
+      _challengeRepository.getChallengeByName("Challenge 8"),
+      _challengeRepository.getChallengeByName("Challenge 12"),
+      _challengeRepository.getChallengeByName("Challenge 20"),
+      _challengeRepository.getChallengeByName("Challenge 1"),
+      _challengeRepository.getChallengeByName("Challenge 19"),
+      _challengeRepository.getChallengeByName("Challenge 13"),
+      _challengeRepository.getChallengeByName("Challenge 6"),
+      _challengeRepository.getChallengeByName("Challenge 14"),
+      _challengeRepository.getChallengeByName("Challenge 13"),
+      _challengeRepository.getChallengeByName("Challenge 15"),
+      _challengeRepository.getChallengeByName("Challenge 16"),
+      _challengeRepository.getChallengeByName("Challenge 1"),
+      _challengeRepository.getChallengeByName("Challenge 17"),
+      _challengeRepository.getChallengeByName("Challenge 18"),
+      _challengeRepository.getChallengeByName("Challenge 13"),
+      _challengeRepository.getChallengeByName("Challenge 19"),
+      _challengeRepository.getChallengeByName("Challenge 20"),
+      _challengeRepository.getChallengeByName("Challenge 1"),
+    ]);
 
-      for (int i = 0; i < users.length; i++) {
-        await _participantRepository.addParticipant(Participant(
-          userId: users[i].id!,
-          challengeId: challenges[i].id!,
-          totalDistance: 0.0 + i,
-        ));
-      }
+    for (int i = 0; i < users.length; i++) {
+      await _participantRepository.addParticipant(Participant(
+        userId: users[i].id!,
+        challengeId: challenges[i].id!,
+        totalDistance: 0.0 + i,
+      ));
+    }
   }
 
-  static Future<void> _initializeRun() async {
+  static Future<void> _initializeRuns() async {
     final users = await _userRepository.getAllUsers();
     final challenges = await _challengeRepository.getAllChallenges();
+    final now = DateTime(2025, 1, 17); // Current date from context
 
     for (var user in users) {
       for (var challenge in challenges) {
@@ -539,24 +468,157 @@ class InitializeFirebase {
           totalDistance: 0.0,
         ));
 
-        for (int i = 0; i < 20; i++) {
+        // Create 3 runs within the last 2 weeks
+        for (int i = 0; i < 3; i++) {
+          // Distribute runs across the last 14 days
+          final daysAgo = (i * 4) + (user.hashCode % 3); // Distribute runs evenly, with some variation per user
+          final runDate = now.subtract(Duration(days: daysAgo));
+          final runTime = DateTime(
+            runDate.year,
+            runDate.month,
+            runDate.day,
+            8 + (user.hashCode % 12), // Distribute start times between 8 AM and 7 PM
+            30 + (i * 15), // Vary minutes
+          );
+
           await _runRepository.addRun(Run(
             userId: user.id!,
             challengeId: challenge.id,
             distance: 5.0 + i,
-            duration: 1800 + (i * 60),
-            date: DateTime.now().subtract(Duration(days: i)),
+            duration: 1800 + (i * 60), // 30 minutes + additional minutes per run
+            date: runTime,
             steps: 6000 + (i * 100),
             calories: 300 + (i * 10),
             averagePace: 6.0 - (i * 0.1),
             averageSpeed: 10.0 + (i * 0.2),
             route: [
-              LatLngPoint(latitude: 40.7128, longitude: -74.0060, timestamp: DateTime.now().subtract(Duration(days: i))),
-              LatLngPoint(latitude: 40.7138, longitude: -74.0070, timestamp: DateTime.now().subtract(Duration(days: i)).add(Duration(minutes: 5))),
+              LatLngPoint(
+                  latitude: 40.7128,
+                  longitude: -74.0060,
+                  timestamp: runTime
+              ),
+              LatLngPoint(
+                  latitude: 40.7138,
+                  longitude: -74.0070,
+                  timestamp: runTime.add(Duration(minutes: 5))
+              ),
             ],
           ));
         }
       }
+    }
+  }
+
+  static Future<void> _initializeInvitations() async {
+    final invitations = [
+      // Challenge 1 invitations
+      Invitation(
+        challengeId: (await _challengeRepository.getChallengeByName("Challenge 1")).id!,
+        email: "alicesmith@gmail.com",
+        status: InvitationStatusEnum.pending,
+      ),
+      Invitation(
+        challengeId: (await _challengeRepository.getChallengeByName("Challenge 1")).id!,
+        email: "bobjohnson@gmail.com",
+        status: InvitationStatusEnum.accepted,
+      ),
+      Invitation(
+        challengeId: (await _challengeRepository.getChallengeByName("Challenge 1")).id!,
+        email: "charliebrown@gmail.com",
+        status: InvitationStatusEnum.declined,
+      ),
+      Invitation(
+        challengeId: (await _challengeRepository.getChallengeByName("Challenge 1")).id!,
+        email: "admin@gmail.com",
+        status: InvitationStatusEnum.accepted,
+      ),
+      // Challenge 2 invitations
+      Invitation(
+        challengeId: (await _challengeRepository.getChallengeByName("Challenge 2")).id!,
+        email: "janedoe@gmail.com",
+        status: InvitationStatusEnum.pending,
+      ),
+      Invitation(
+        challengeId: (await _challengeRepository.getChallengeByName("Challenge 2")).id!,
+        email: "bobjohnson@gmail.com",
+        status: InvitationStatusEnum.accepted,
+      ),
+      Invitation(
+        challengeId: (await _challengeRepository.getChallengeByName("Challenge 2")).id!,
+        email: "admin@gmail.com",
+        status: InvitationStatusEnum.pending,
+      ),
+      Invitation(
+        challengeId: (await _challengeRepository.getChallengeByName("Challenge 2")).id!,
+        email: "charliebrown@gmail.com",
+        status: InvitationStatusEnum.declined,
+      ),
+      // Challenge 3 invitations
+      Invitation(
+        challengeId: (await _challengeRepository.getChallengeByName("Challenge 3")).id!,
+        email: "charliebrown@gmail.com",
+        status: InvitationStatusEnum.pending,
+      ),
+      Invitation(
+        challengeId: (await _challengeRepository.getChallengeByName("Challenge 3")).id!,
+        email: "janedoe@gmail.com",
+        status: InvitationStatusEnum.accepted,
+      ),
+      Invitation(
+        challengeId: (await _challengeRepository.getChallengeByName("Challenge 3")).id!,
+        email: "bobjohnson@gmail.com",
+        status: InvitationStatusEnum.declined,
+      ),
+      Invitation(
+        challengeId: (await _challengeRepository.getChallengeByName("Challenge 3")).id!,
+        email: "admin@gmail.com",
+        status: InvitationStatusEnum.accepted,
+      ),
+      // Admin user additional invitations
+      Invitation(
+        challengeId: (await _challengeRepository.getChallengeByName("Challenge 1")).id!,
+        email: "admin@gmail.com",
+        status: InvitationStatusEnum.pending,
+      ),
+      Invitation(
+        challengeId: (await _challengeRepository.getChallengeByName("Challenge 2")).id!,
+        email: "admin@gmail.com",
+        status: InvitationStatusEnum.declined,
+      ),
+      Invitation(
+        challengeId: (await _challengeRepository.getChallengeByName("Challenge 3")).id!,
+        email: "admin@gmail.com",
+        status: InvitationStatusEnum.accepted,
+      ),
+      Invitation(
+        challengeId: (await _challengeRepository.getChallengeByName("Challenge 1")).id!,
+        email: "janedoe@gmail.com",
+        status: InvitationStatusEnum.accepted,
+      ),
+      Invitation(
+        challengeId: (await _challengeRepository.getChallengeByName("Challenge 2")).id!,
+        email: "bobjohnson@gmail.com",
+        status: InvitationStatusEnum.pending,
+      ),
+      Invitation(
+        challengeId: (await _challengeRepository.getChallengeByName("Challenge 3")).id!,
+        email: "alicesmith@gmail.com",
+        status: InvitationStatusEnum.declined,
+      ),
+      Invitation(
+        challengeId: (await _challengeRepository.getChallengeByName("Challenge 2")).id!,
+        email: "charliebrown@gmail.com",
+        status: InvitationStatusEnum.pending,
+      ),
+      Invitation(
+        challengeId: (await _challengeRepository.getChallengeByName("Challenge 3")).id!,
+        email: "janedoe@gmail.com",
+        status: InvitationStatusEnum.accepted,
+      ),
+    ];
+
+    for (var invitation in invitations) {
+      await _invitationRepository.createInvitation(invitation);
     }
   }
 }

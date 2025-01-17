@@ -37,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
-    Provider.of<UserIdProvider>(context, listen: false).setUserId("EkVYecoAlIP7gjJHItCdVuYORrl2");
+    Provider.of<UserIdProvider>(context, listen: false).setUserId("RmoqcNTrtWviSwgI8oja");
 
     Navigator.pushNamed(context, '/home');
   }

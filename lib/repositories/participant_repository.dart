@@ -146,6 +146,22 @@ class ParticipantRepository extends BaseRepository {
     }
   }
 
+  Future<List<Challenge>> getRecommendedChallenges(String participantId) async {
+    try {
+      List<Challenge> allChallenges = await challengeRepository.getAllChallenges();
+      List<Participant> participantChallenges = await getParticipantsByUserId(participantId);
+      List<String?> participatedChallengeIds = participantChallenges.map((p) => p.challengeId).toList();
+
+      List<Challenge> recommendedChallenges = allChallenges.where((challenge) {
+        return !participatedChallengeIds.contains(challenge.id);
+      }).toList();
+
+      return recommendedChallenges;
+    } catch (e) {
+      throw Exception('Error getting recommended challenges: $e');
+    }
+  }
+
   Future<Participant> updateParticipant(String participantId, Participant participant) async {
     try {
       await collection.doc(participantId).update(participant.toJson());
@@ -189,6 +205,30 @@ class ParticipantRepository extends BaseRepository {
       await collection.doc(participantId).delete();
     } catch (e) {
       throw Exception('Error deleting participant: $e');
+    }
+  }
+  Future<List<Participant>> getTop3ParticipantsByTotalDistance(String challengeId) async {
+    try {
+      // Get all participants for the given challenge
+      List<Participant> participants = await getParticipantsByChallengeId(challengeId);
+
+      // Sort participants by total distance in descending order
+      participants.sort((a, b) => b.totalDistance.compareTo(a.totalDistance));
+
+      // Return the top 3 participants
+      return participants.take(3).toList();
+    } catch (e) {
+      throw Exception('Error getting top 3 participants by total distance: $e');
+    }
+  }
+  Future<List<Participant>> getAllParticipantsForChallenge(String challengeId) async {
+    try {
+      // Get all participants for the given challenge
+      List<Participant> participants = await getParticipantsByChallengeId(challengeId);
+
+      return participants;
+    } catch (e) {
+      throw Exception('Error getting all participants for challenge: $e');
     }
   }
 }
