@@ -4,8 +4,9 @@ import "../../../common/utils/constants.dart";
 import "../models/user_model.dart";
 import "../services/auth_service.dart";
 import "../widgets/custom_text_form_field.dart";
-import "../widgets/custom_elevated_button.dart";
+import "../../../common/widgets/custom_elevated_button.dart";
 import "../../../common/providers/user_provider.dart";
+import "../services/user_service.dart";
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -24,6 +25,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _confirmPasswordController = TextEditingController();
 
   final AuthService _authService = AuthService();
+  final UserService _userService = UserService();
 
   bool _isLoading = false; // Trạng thái đang xử lý
 
@@ -66,7 +68,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         );
 
         if(newUser != null) {
-          await _authService.saveUserToFirestore(newUser);
+          await _userService.saveUserToFirestore(newUser);
 
           // Lưu thông tin người dùng vào Provider
           Provider.of<UserProvider>(context, listen: false).setUser(newUser);

@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "../widgets/runner_overlay.dart";
+import "../../../common/utils/constants.dart";
 
 class GetStartedScreen extends StatelessWidget {
   const GetStartedScreen({super.key});
@@ -11,7 +12,7 @@ class GetStartedScreen extends StatelessWidget {
           children: [
             Positioned.fill(
               child: Image.asset(
-                'assets/images/background.jpg',
+                kBackgroundImagePath,
                 fit: BoxFit.cover,
               ),
             ),
