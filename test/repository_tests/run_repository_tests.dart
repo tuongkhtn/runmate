@@ -184,7 +184,7 @@ void main() {
       await runRepository.addRun(recentRun);
 
       final latestRun = await runRepository.getRunLatestByUserId('user1');
-      expect(latestRun.date.day, recentRun.date.day);
+      expect(latestRun?.date.day, recentRun.date.day);
     });
 
     test('deleteRun removes the run from Firestore', () async {
