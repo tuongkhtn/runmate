@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:runmate/common/utils/constants.dart';
 
-class RecommendedList extends StatefulWidget {
-  const RecommendedList({super.key});
+class OngoingList extends StatefulWidget {
+  const OngoingList({super.key});
 
   @override
-  State<RecommendedList> createState() => _RecommendedListState();
+  State<OngoingList> createState() => _OngoingListState();
 }
 
-class _RecommendedListState extends State<RecommendedList> {
+class _OngoingListState extends State<OngoingList> {
 
   bool _isLoading = false;
 
@@ -130,11 +130,11 @@ class _RecommendedListState extends State<RecommendedList> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 textStyle: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold
                 ),
               ),
-              child: const Text('Join',),
+              child: const Text('Detail',),
             ),
           ),
         ],

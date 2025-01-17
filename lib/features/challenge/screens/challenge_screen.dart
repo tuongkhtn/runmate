@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../common/utils/constants.dart';
 import 'recommended_screen.dart';
+import 'ongoing_screen.dart';
+import 'completed_screen.dart';
+import 'owner_screen.dart';
 
 class ChallengeScreen extends StatelessWidget {
   const ChallengeScreen({super.key});
@@ -72,9 +75,9 @@ class ChallengeScreen extends StatelessWidget {
           children: [
             // Các nội dung hiển thị trong từng tab
             RecommendedList(),
-            RecommendedList(),
-            RecommendedList(),
-            RecommendedList(),
+            OngoingList(),
+            CompletedList(),
+            OwnerList(),
           ],
         ),
       ),

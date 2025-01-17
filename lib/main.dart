@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
           '/let_run': (context) => const RunScreen(),
           '/challenge': (context) => const ChallengeScreen(),
       },
-        initialRoute: '/let_run',
+        initialRoute: '/challenge',
       ),
     );
   }
