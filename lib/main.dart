@@ -6,7 +6,7 @@ import "package:firebase_core/firebase_core.dart";
 import "package:provider/provider.dart";
 import "package:runmate/firebase_options.dart";
 import "package:runmate/initialize_data.dart";
-import "features/let_run/screens/run_screen.dart";
+import "common/providers/user_id_provider.dart";
 import "features/onboarding/screens/get_started_screen.dart";
 import "features/auth/screens/login_screen.dart";
 import "features/auth/screens/register_screen.dart";
@@ -30,7 +30,14 @@ Future<void> main() async {
     InitializeFirebase.initialize();
   }
 
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => UserIdProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 Future<void> _connectToEmulator() async {
@@ -48,11 +55,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => UserProvider()),
-      ],
-      child: MaterialApp(
+    return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: "Runmate",
         routes: {
@@ -60,11 +63,10 @@ class MyApp extends StatelessWidget {
           '/login': (context) => const LoginScreen(),
           '/register': (context) => const RegisterScreen(),
           '/profile': (context) => const ProfileScreen(),
-          '/let_run': (context) => const RunScreen(),
+       //   '/let_run': (context) => const RunScreen(),
           '/test': (context) => const UserFormScreen(),
       },
         initialRoute: '/',
-      ),
     );
   }
 }
