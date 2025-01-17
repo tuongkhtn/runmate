@@ -20,8 +20,8 @@ class InitializeFirebase {
   static final RunRepository _runRepository = RunRepository();
 
   static Future<void> initialize() async {
-    WidgetsFlutterBinding.ensureInitialized();
-    await Firebase.initializeApp();
+    // WidgetsFlutterBinding.ensureInitialized();
+    // await Firebase.initializeApp();
 
     await _initializeUser();
     await _initializeChallenge();

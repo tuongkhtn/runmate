@@ -354,7 +354,7 @@ class _RunScreenState extends State<RunScreen> {
             ),
             Positioned(
               right: 4,
-              top: MediaQuery.of(context).size.height / 2 - 20,
+              top: MediaQuery.of(context).size.height / 2 - 70,
               child: Column(
                 children: [
                   // Nút Zoom In

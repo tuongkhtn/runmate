@@ -18,11 +18,11 @@ import 'common/widgets/custom_bottom_navbar.dart';
 import "package:firebase_app_check/firebase_app_check.dart";
 
 const bool USE_EMULATOR = false;
-const bool INITIALIZE_FIREBASE = true;
+const bool INITIALIZE_FIREBASE = false;
 
 Future<void> main() async {
-  // WidgetsFlutterBinding.ensureInitialized();
-  // await Firebase.initializeApp();
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
 
   if (USE_EMULATOR) {
     await _connectToEmulator();
@@ -70,6 +70,7 @@ class MyApp extends StatelessWidget {
         '/challenge': (context) => const ChallengeScreen(),
         '/home': (context) =>
             const CustomBottomNavbar(), // ProfileScreen sẽ nhận arguments
+
       },
       initialRoute: '/',
     );
