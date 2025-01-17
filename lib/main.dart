@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import "package:firebase_core/firebase_core.dart";
 import "package:provider/provider.dart";
 import "package:runmate/firebase_options.dart";
+import "package:runmate/initialize_data.dart";
 import "features/let_run/screens/run_screen.dart";
 import "features/onboarding/screens/get_started_screen.dart";
 import "features/auth/screens/login_screen.dart";
@@ -13,7 +14,8 @@ import "features/profile/screens/profile_screen.dart";
 import "common/providers/user_provider.dart";
 import "features/test_screen.dart";
 
-const bool USE_EMULATOR = false;
+const bool USE_EMULATOR = true;
+const bool INITIALIZE_FIREBASE = true;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,6 +25,10 @@ Future<void> main() async {
 
   if (USE_EMULATOR) {
     await _connectToEmulator();
+  }
+
+  if (INITIALIZE_FIREBASE) {
+    InitializeFirebase.initialize();
   }
 
   runApp(const MyApp());
@@ -54,7 +60,7 @@ class MyApp extends StatelessWidget {
           '/': (context) => const GetStartedScreen(),
           '/login': (context) => const LoginScreen(),
           '/register': (context) => const RegisterScreen(),
-          '/home': (context) => const ProfileScreen(),
+          '/profile': (context) => const ProfileScreen(),
           '/let_run': (context) => const RunScreen(),
           '/test': (context) => const UserFormScreen(),
       },
