@@ -31,7 +31,7 @@ class Run {
   final String userId;
   final String? challengeId;
   final double distance;
-  final Duration duration;
+  final int duration;
   final DateTime date;
   final int steps;
   final double calories;
@@ -44,7 +44,7 @@ class Run {
     required this.userId,
     this.challengeId,
     this.distance = 0,
-    this.duration = const Duration(),
+    this.duration = 0,
     required this.date,
     this.steps = 0,
     this.calories = 0,

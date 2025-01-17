@@ -66,12 +66,12 @@ class MyApp extends StatelessWidget {
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
         '/profile': (context) => const ProfileScreen(),
-        //   '/let_run': (context) => const RunScreen(),
+        '/let_run': (context) => const RunScreen(),
         '/test': (context) => const UserFormScreen(),
         '/home': (context) =>
             const CustomBottomNavbar(), // ProfileScreen sẽ nhận arguments
       },
-      initialRoute: '/',
+      initialRoute: '/let_run',
     );
   }
 }

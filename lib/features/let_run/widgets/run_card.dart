@@ -15,7 +15,8 @@ class RunCard extends StatelessWidget {
     if (lastRun == null) {
       return const Center(child: Text('No previous runs'));
     }
-
+    Duration duration = Duration(seconds: lastRun!.duration);
+    String formattedTime = '${duration.inMinutes}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}';
     return Container(
       padding: const EdgeInsets.all(16),
       margin: const EdgeInsets.all(16),
@@ -49,7 +50,7 @@ class RunCard extends StatelessWidget {
 
               _buildStat(
                 'Time',
-                '${lastRun!.duration.inMinutes}:${(lastRun!.duration.inSeconds % 60).toString().padLeft(2, '0')}',
+                formattedTime,
               ),
               _buildStat('Calories', lastRun!.calories.toStringAsFixed(1)),
               _buildStat('Pace', '${lastRun!.averagePace.toStringAsFixed(2)}'),

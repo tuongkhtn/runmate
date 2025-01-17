@@ -12,7 +12,7 @@ class RunnerOverlay extends StatelessWidget {
     final user = userProvider.userId;
 
     if(user != null) {
-      Navigator.pushNamed(context, "/home");
+      Navigator.pushNamed(context, "/let_run");
     } else {
       Navigator.pushNamed(context, "/let_run");
     }

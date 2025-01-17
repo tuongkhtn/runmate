@@ -27,7 +27,7 @@ class _RunScreenState extends State<RunScreen> {
   final _runRepository = RunRepository();
 
   GoogleMapController? _mapController;
-  String _userID = "EkVYecoAlIP7gjJHItCdVuYORrl2";
+  String _userID = "BTx4NG0javv0Bqh5G8Xu";
   User? _user;
 
   int _streak = 0;
@@ -62,11 +62,11 @@ class _RunScreenState extends State<RunScreen> {
       return;
     }
     final users = await _userRepository.getUserById(_userID);
-    // final streak = await _runRepository.getStreakByUserID(_userID);
-    final streak = 0;
-    final lastRun = null;
-    // final lastRun = await _runRepository.getRunLatestByUserId(_userID);
+    final streak = await _runRepository.getStreakByUserID(_userID);
+    // final lastRun = null;
+    final lastRun = await _runRepository.getRunLatestByUserId(_userID);
     print("User: $users");
+    print("Last Run: $lastRun");
 
     setState(() {
       _streak = streak;
@@ -133,7 +133,7 @@ class _RunScreenState extends State<RunScreen> {
     final newRun = Run(
       userId: _userID,
       date: _startTime!,
-      duration: duration,
+      duration: duration.inSeconds,
       distance: distance,
       steps: _currentSteps,
       calories: calories,
@@ -144,7 +144,7 @@ class _RunScreenState extends State<RunScreen> {
 
     print(newRun.toJson().toString()); // Debug print
     await _runRepository.addRun(newRun);
-    // int newStreak = await _runRepository.getStreakByUserID(_userID);
+    int newStreak = await _runRepository.getStreakByUserID(_userID);
 
 
 
@@ -155,7 +155,7 @@ class _RunScreenState extends State<RunScreen> {
       _isRunning = false;
       _lastRun = newRun;
       // _streak = (duration.inMinutes > 1 && distance > 0.1) ?  _streak + 1 : _streak;
-      _streak = _streak + 1;
+      _streak = newStreak;
     });
   }
 
