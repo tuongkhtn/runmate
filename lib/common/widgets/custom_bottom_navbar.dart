@@ -15,7 +15,7 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
-    const ProfileScreen(),
+    const HomeScreen(),
     const ChallengeScreen(),
     const ProfileScreen(),
   ];
