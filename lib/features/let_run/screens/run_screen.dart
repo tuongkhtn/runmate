@@ -7,17 +7,13 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import '../services/location_service.dart';
-// import '../services/streak_service.dart';
-// import '../services/run_storage_service.dart';
+import '../services/streak_service.dart';
+import '../services/run_storage_service.dart';
 import '../widgets/run_card.dart';
-import '../../../models/user.dart';
-import '../../../models/user.dart';
-import 'package:runmate/repositories/user_repository.dart';
-import 'package:runmate/models/run.dart';
-import 'package:runmate/repositories/run_repository.dart';
-
-
-
+import "../../../models/user.dart";
+import "../../../repositories/user_repository.dart";
+import "../../../models/run.dart";
+import "../../../repositories/run_repository.dart";
 class RunScreen extends StatefulWidget {
   const RunScreen({super.key});
 
@@ -27,13 +23,12 @@ class RunScreen extends StatefulWidget {
 
 class _RunScreenState extends State<RunScreen> {
   final LocationService _locationService = LocationService();
-  // final StreakService _streakService = StreakService();
-  // final RunStorageService _runStorageService = RunStorageService();
+  final _userRepository = UserRepository();
+  final _runRepository = RunRepository();
+
   GoogleMapController? _mapController;
-  final String userID = 'EkVYecoAlIP7gjJHItCdVuYORrl2';
-  // final UserRepository _userRepository = UserRepository();
-  // final RunRepository _runRepository = RunRepository();
-  User ?_user;
+  String _userID = "EkVYecoAlIP7gjJHItCdVuYORrl2";
+  User? _user;
 
   int _streak = 0;
   bool _isLoading = true;
@@ -43,7 +38,6 @@ class _RunScreenState extends State<RunScreen> {
   DateTime? _startTime;
   int _currentSteps = 0;
   Timer? _timer;
-
 
   // Step detection variables
   double _lastMagnitude = 0;
@@ -67,17 +61,17 @@ class _RunScreenState extends State<RunScreen> {
       // Handle permission denied
       return;
     }
-
-    // final streak = await _runRepository.getStreakByUserID(userID);
-    // final lastRun = await _runRepository.getRunLatestByUserId(userID);
-    // final user = await _userRepository.getUserById(userID);
-
+    final users = await _userRepository.getUserById(_userID);
+    // final streak = await _runRepository.getStreakByUserID(_userID);
+    final streak = 0;
+    final lastRun = null;
+    // final lastRun = await _runRepository.getRunLatestByUserId(_userID);
+    print("User: $users");
 
     setState(() {
       _streak = streak;
       _lastRun = lastRun;
       _isLoading = false;
-      _user = user;
     });
 
     // Initialize step detection
@@ -136,9 +130,8 @@ class _RunScreenState extends State<RunScreen> {
         duration.inMinutes, distance); // Implement this method
 
     print("duration: ${duration.inMicroseconds}"); // Debug print
-    final newRun = new Run(
-      userId: userID,
-      challengeId: null,
+    final newRun = Run(
+      userId: _userID,
       date: _startTime!,
       duration: duration,
       distance: distance,
@@ -147,12 +140,12 @@ class _RunScreenState extends State<RunScreen> {
       route: _currentRoute,
       averagePace: distance > 0 ? duration.inMinutes / distance : 0,
       averageSpeed: distance > 0 && duration.inMicroseconds > 0 ? distance * 3600 / duration.inSeconds  : 0,
-      createdAt: DateTime.now(),
     );
 
     print(newRun.toJson().toString()); // Debug print
     await _runRepository.addRun(newRun);
-    final newStreak = await _runRepository.getStreakByUserID(userID);
+    // int newStreak = await _runRepository.getStreakByUserID(_userID);
+
 
 
     _timer?.cancel();
@@ -162,7 +155,7 @@ class _RunScreenState extends State<RunScreen> {
       _isRunning = false;
       _lastRun = newRun;
       // _streak = (duration.inMinutes > 1 && distance > 0.1) ?  _streak + 1 : _streak;
-      _streak = newStreak;
+      _streak = _streak + 1;
     });
   }
 
@@ -587,9 +580,9 @@ class _RunScreenState extends State<RunScreen> {
         Text(
           value,
           style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Colors.white
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.white
           ),
         ),
         Text(
