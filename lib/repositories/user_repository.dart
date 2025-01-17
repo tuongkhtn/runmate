@@ -48,6 +48,8 @@ class UserRepository extends BaseRepository {
       final doc = await collection.doc(userId).get();
       if (!doc.exists) throw Exception('User not found');
 
+      print("Doc: ${doc.data()}");
+
       final user = User.fromJson(doc.data() as Map<String, dynamic>);
       user.id = doc.id;
       return user;
@@ -66,17 +68,16 @@ class UserRepository extends BaseRepository {
     }
   }
 
-Future<User> createUser(User user) async {
-  try {
-    final docRef = await collection.add(user.toJson());
-    User createdUser = await getUserById(docRef.id);
-    createdUser.id = docRef.id;
-    return createdUser;
-  } catch (e) {
-    print('Error creating user: $e');
-    throw Exception('Error creating user');
+  Future<void> createUser(User user) async {
+    try {
+      if (user.id == null) {
+        throw Exception('User ID (UID) is required to create user in Firestore');
+      }
+      await collection.doc(user.id).set(user.toJson());
+    } catch (e) {
+      throw Exception('Error creating user: $e');
+    }
   }
-}
 
   Future<User> updateUser(String? userId, Map<String, dynamic> data) async {
     try {

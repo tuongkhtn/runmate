@@ -1,12 +1,10 @@
 import "package:flutter/material.dart";
-import "package:provider/provider.dart";
 import "../../../common/utils/constants.dart";
-import "../models/user_model.dart";
-import "../services/auth_service.dart";
 import "../widgets/custom_text_form_field.dart";
 import "../../../common/widgets/custom_elevated_button.dart";
-import "../../../common/providers/user_provider.dart";
-import "../services/user_service.dart";
+import "../services/auth_service.dart";
+import "../../../models/user.dart";
+import "../../../repositories/user_repository.dart";
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -25,7 +23,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _confirmPasswordController = TextEditingController();
 
   final AuthService _authService = AuthService();
-  final UserService _userService = UserService();
+  final UserRepository _userRepository = UserRepository();
 
   bool _isLoading = false; // Trạng thái đang xử lý
 
@@ -34,6 +32,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -54,35 +53,34 @@ class _RegisterScreenState extends State<RegisterScreen> {
     try {
       final user = await _authService.registerWithEmailAndPassword(email, password);
 
-      UserModel? newUser;
+      User? newUser;
 
       if(user != null) {
-        newUser = UserModel(
-          userId: user.uid,
+        newUser = User(
+          id: user.uid,
           name: name,
           email: email,
           avatarUrl: '',
           totalDistance: 0.0,
           totalTime: 0,
+          phoneNumber: '',
+          address: '',
+          dateOfBirth: DateTime(2000, 1, 1),
           createdAt: DateTime.now(),
         );
 
-        if(newUser != null) {
-          await _userService.saveUserToFirestore(newUser);
+        await _userRepository.createUser(newUser);
 
-          // Lưu thông tin người dùng vào Provider
-          Provider.of<UserProvider>(context, listen: false).setUser(newUser);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("User registered successfully!")),
+        );
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("User registered successfully!")),
-          );
-
-          Navigator.pushNamed(context, "/login");
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Failed to register user!")),
-          );
-        }
+        // Điều hướng về màn hình đăng nhập
+        Navigator.pushNamed(context, "/login");
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Failed to create user in Firebase Auth!")),
+        );
       }
 
     } catch(e) {
