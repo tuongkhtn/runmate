@@ -1,6 +1,9 @@
 // lib/screens/run_screen.dart
 import 'dart:math';
 import 'dart:async';
+import 'package:provider/provider.dart';
+
+import '../../../common/providers/user_id_provider.dart';
 import "../../../common/utils/constants.dart";
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -27,7 +30,8 @@ class _RunScreenState extends State<RunScreen> {
   final _runRepository = RunRepository();
 
   GoogleMapController? _mapController;
-  String _userID = "BTx4NG0javv0Bqh5G8Xu";
+  late String _userId;
+
   User? _user;
 
   int _streak = 0;
@@ -51,8 +55,14 @@ class _RunScreenState extends State<RunScreen> {
   @override
   void initState() {
     super.initState();
+    _userId = Provider.of<UserIdProvider>(context, listen: false).userId!;
     _initializeServices();
 
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
   }
 
   Future<void> _initializeServices() async {
@@ -61,10 +71,10 @@ class _RunScreenState extends State<RunScreen> {
       // Handle permission denied
       return;
     }
-    final users = await _userRepository.getUserById(_userID);
-    final streak = await _runRepository.getStreakByUserID(_userID);
+    final users = await _userRepository.getUserById(_userId);
+    final streak = await _runRepository.getStreakByUserID(_userId);
     // final lastRun = null;
-    final lastRun = await _runRepository.getRunLatestByUserId(_userID);
+    final lastRun = await _runRepository.getRunLatestByUserId(_userId);
     print("User: $users");
     print("Last Run: $lastRun");
 
@@ -131,7 +141,7 @@ class _RunScreenState extends State<RunScreen> {
 
     print("duration: ${duration.inMicroseconds}"); // Debug print
     final newRun = Run(
-      userId: _userID,
+      userId: _userId,
       date: _startTime!,
       duration: duration.inSeconds,
       distance: distance,
@@ -144,7 +154,7 @@ class _RunScreenState extends State<RunScreen> {
 
     print(newRun.toJson().toString()); // Debug print
     await _runRepository.addRun(newRun);
-    int newStreak = await _runRepository.getStreakByUserID(_userID);
+    int newStreak = await _runRepository.getStreakByUserID(_userId);
 
 
 
@@ -451,7 +461,7 @@ class _RunScreenState extends State<RunScreen> {
                                               ),
                                             ),
                                             Text(
-                                              ' ${(_streak ~/ 10 + 1) * 10 - _streak} more run to ${(_streak ~/ 10 + 1) * 10} run streak',
+                                              ' ${(_streak ~/ 100 + 1) * 100 - _streak} more run to ${(_streak ~/ 100 + 1) * 100} run streak',
                                               style: const TextStyle(
                                                 fontSize: 14,
                                                 color: Colors.grey,

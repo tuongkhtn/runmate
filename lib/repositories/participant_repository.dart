@@ -207,4 +207,28 @@ class ParticipantRepository extends BaseRepository {
       throw Exception('Error deleting participant: $e');
     }
   }
+  Future<List<Participant>> getTop3ParticipantsByTotalDistance(String challengeId) async {
+    try {
+      // Get all participants for the given challenge
+      List<Participant> participants = await getParticipantsByChallengeId(challengeId);
+
+      // Sort participants by total distance in descending order
+      participants.sort((a, b) => b.totalDistance.compareTo(a.totalDistance));
+
+      // Return the top 3 participants
+      return participants.take(3).toList();
+    } catch (e) {
+      throw Exception('Error getting top 3 participants by total distance: $e');
+    }
+  }
+  Future<List<Participant>> getAllParticipantsForChallenge(String challengeId) async {
+    try {
+      // Get all participants for the given challenge
+      List<Participant> participants = await getParticipantsByChallengeId(challengeId);
+
+      return participants;
+    } catch (e) {
+      throw Exception('Error getting all participants for challenge: $e');
+    }
+  }
 }
