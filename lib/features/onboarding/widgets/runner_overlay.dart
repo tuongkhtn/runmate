@@ -1,9 +1,22 @@
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
+import "package:provider/provider.dart";
+import "package:runmate/common/providers/user_id_provider.dart";
 import "../../../common/utils/constants.dart";
 
 class RunnerOverlay extends StatelessWidget {
   const RunnerOverlay({super.key});
+
+  void handleGetStarted(BuildContext context) {
+    final userProvider = Provider.of<UserIdProvider>(context, listen: false);
+    final user = userProvider.userId;
+
+    if(user != null) {
+      Navigator.pushNamed(context, "/let_run");
+    } else {
+      Navigator.pushNamed(context, "/let_run");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,6 +70,7 @@ class RunnerOverlay extends StatelessWidget {
                       )
                   )
               ),
+
             ),
 
             const SizedBox(height: 15),

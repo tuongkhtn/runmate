@@ -7,11 +7,14 @@ import "package:runmate/features/challenge/screens/challenge_screen.dart";
 import "package:runmate/firebase_options.dart";
 import "package:runmate/initialize_data.dart";
 import "common/providers/user_id_provider.dart";
+import "features/let_run/screens/run_screen.dart";
 import "features/onboarding/screens/get_started_screen.dart";
 import "features/auth/screens/login_screen.dart";
 import "features/auth/screens/register_screen.dart";
 import "features/profile/screens/profile_screen.dart";
 import "features/test_screen.dart";
+import 'package:provider/provider.dart';
+import 'common/providers/user_id_provider.dart';
 import 'common/widgets/custom_bottom_navbar.dart';
 
 const bool USE_EMULATOR = false;
@@ -64,13 +67,13 @@ class MyApp extends StatelessWidget {
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
         '/profile': (context) => const ProfileScreen(),
-        //   '/let_run': (context) => const RunScreen(),
+        '/let_run': (context) => const RunScreen(),
         '/test': (context) => const UserFormScreen(),
         '/challenge': (context) => const ChallengeScreen(),
         '/home': (context) =>
             const CustomBottomNavbar(), // ProfileScreen sẽ nhận arguments
       },
-      initialRoute: '/challenge',
+      initialRoute: '/let_run',
     );
   }
 }

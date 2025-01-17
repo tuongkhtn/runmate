@@ -42,56 +42,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       return;
     }
 
-    final name = _nameController.text.trim();
-    final email = _emailController.text.trim();
-    final password = _passwordController.text.trim();
-
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      final user = await _authService.registerWithEmailAndPassword(email, password);
-
-      User? newUser;
-
-      if(user != null) {
-        newUser = User(
-          id: user.uid,
-          name: name,
-          email: email,
-          avatarUrl: '',
-          totalDistance: 0.0,
-          totalTime: 0,
-          phoneNumber: '',
-          address: '',
-          dateOfBirth: DateTime(2000, 1, 1),
-          createdAt: DateTime.now(),
-        );
-
-        await _userRepository.createUser(newUser);
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("User registered successfully!")),
-        );
-
-        // Điều hướng về màn hình đăng nhập
-        Navigator.pushNamed(context, "/login");
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Failed to create user in Firebase Auth!")),
-        );
-      }
-
-    } catch(e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error: $e")),
-      );
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
+    Navigator.pushNamed(context, "/login");
   }
 
   @override

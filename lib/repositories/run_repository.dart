@@ -13,16 +13,17 @@ class RunRepository extends BaseRepository {
 
   Future<Run> addRun(Run run) async {
     try {
-      final docRef = await collection.add(run.toJson());
-      Run? createdRun = await getRunById(docRef.id);
-      if (createdRun == null) {
-        throw Exception('Error creating run');
-      }
+      print("Trying to add run: ${run.toJson()}"); // Debug print 1
 
+      final docRef = await collection.add(run.toJson());
+      print("Successfully added with ID: ${docRef.id}"); // Debug print 2
+
+      Run createdRun = run;
       createdRun.id = docRef.id;
 
       return createdRun;
     } catch (e) {
+      print("Error details: $e"); // Debug print 3
       throw Exception('Error adding run: $e');
     }
   }
@@ -104,20 +105,21 @@ class RunRepository extends BaseRepository {
     }
   }
 
-  Future<Run> getRunLatestByUserId(String userId) async {
+  Future<Run?> getRunLatestByUserId(String userId) async {
     try {
       final querySnapshot = await collection
           .where('userId', isEqualTo: userId)
           .orderBy('date', descending: true)
           .limit(1)
           .get();
-      return querySnapshot.docs
-          .map((doc) {
-            Run run = Run.fromJson(doc.data() as Map<String, dynamic>);
-            run.id = doc.id;
-            return run;
-          })
-          .first;
+
+      if (querySnapshot.docs.isEmpty) return null;
+
+      final doc = querySnapshot.docs.first;  // More direct than using map()
+      final run = Run.fromJson(doc.data() as Map<String, dynamic>);
+      run.id = doc.id;
+      return run;
+
     } catch (e) {
       throw Exception('Error getting latest run by user ID: $e');
     }
@@ -278,4 +280,61 @@ class RunRepository extends BaseRepository {
       throw Exception('Error deleting run: $e');
     }
   }
-}
+
+  Future<int> getStreakByUserID(String userID) async {
+    try {
+      final now = DateTime.now();
+      // Start of today (midnight)
+      final today = DateTime(now.year, now.month, now.day);
+
+      final querySnapshot = await collection
+          .where('userId', isEqualTo: userID)
+          .orderBy('date', descending: true)
+          .get();
+
+      if (querySnapshot.docs.isEmpty) return 0;
+
+      int streak = 0;
+      DateTime? lastDate;
+
+      for (var doc in querySnapshot.docs) {
+        final run = Run.fromJson(doc.data() as Map<String, dynamic>);
+        // Convert run date to start of day for comparison
+        final runDate = DateTime(
+            run.date.year,
+            run.date.month,
+            run.date.day
+        );
+
+        // Initialize streak if this is first run
+        if (lastDate == null) {
+          // Only count if run is today or yesterday
+          if (today.difference(runDate).inDays <= 1) {
+            streak = 1;
+            lastDate = runDate;
+            continue;
+          } else {
+            // First run is older than yesterday - no active streak
+            return 0;
+          }
+        }
+
+        // Check if this run is consecutive with last run
+        if (lastDate.difference(runDate).inDays == 1) {
+          streak++;
+          lastDate = runDate;
+        } else if (lastDate.difference(runDate).inDays == 0) {
+          // Multiple runs same day - ignore
+          continue;
+        } else {
+          // Gap found - end streak count
+          break;
+        }
+      }
+
+      return streak;
+    } catch (e) {
+      throw Exception('Error getting streak by user ID: $e');
+    }
+  }
+  }

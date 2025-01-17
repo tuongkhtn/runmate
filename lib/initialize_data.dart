@@ -3,18 +3,21 @@ import 'package:flutter/cupertino.dart';
 import 'package:runmate/models/challenge.dart';
 import 'package:runmate/repositories/challenge_repository.dart';
 import 'package:runmate/repositories/participant_repository.dart';
+import 'package:runmate/repositories/run_repository.dart';
 import 'package:runmate/repositories/user_repository.dart';
 
 import 'enums/challenge_status_enum.dart';
 import 'enums/challenge_type_enum.dart';
 import 'firebase_options.dart';
 import 'models/participant.dart';
+import 'models/run.dart';
 import 'models/user.dart';
 
 class InitializeFirebase {
   static final UserRepository _userRepository = UserRepository();
   static final ChallengeRepository _challengeRepository = ChallengeRepository();
   static final ParticipantRepository _participantRepository = ParticipantRepository();
+  static final RunRepository _runRepository = RunRepository();
 
   static Future<void> initialize() async {
     WidgetsFlutterBinding.ensureInitialized();
@@ -25,6 +28,7 @@ class InitializeFirebase {
     await _initializeUser();
     await _initializeChallenge();
     await _initializeParticipant();
+    await _initializeRun();
   }
 
   static Future<void> _initializeUser() async {
@@ -408,23 +412,48 @@ class InitializeFirebase {
         _userRepository.getUserByEmail("johndoe@gmail.com"),
         _userRepository.getUserByEmail("janedoe@gmail.com"),
         _userRepository.getUserByEmail("alicesmith@gmail.com"),
+        _userRepository.getUserByEmail("ivywhite@gmail.com"),
+        _userRepository.getUserByEmail("johndoe@gmail.com"),
+        _userRepository.getUserByEmail("jackblack@gmail.com"),
         _userRepository.getUserByEmail("bobjohnson@gmail.com"),
         _userRepository.getUserByEmail("charliebrown@gmail.com"),
         _userRepository.getUserByEmail("davidwilson@gmail.com"),
         _userRepository.getUserByEmail("jackblack@gmail.com"),
         _userRepository.getUserByEmail("bobjohnson@gmail.com"),
+        _userRepository.getUserByEmail("frankmiller@gmail.com"),
+        _userRepository.getUserByEmail("davidwilson@gmail.com"),
         _userRepository.getUserByEmail("janedoe@gmail.com"),
         _userRepository.getUserByEmail("jackblack@gmail.com"),
         _userRepository.getUserByEmail("janedoe@gmail.com"),
+        _userRepository.getUserByEmail("jackblack@gmail.com"),
         _userRepository.getUserByEmail("evedavis@gmail.com"),
+        _userRepository.getUserByEmail("bobjohnson@gmail.com"),
+        _userRepository.getUserByEmail("ivywhite@gmail.com"),
         _userRepository.getUserByEmail("gracelee@gmail.com"),
+        _userRepository.getUserByEmail("davidwilson@gmail.com"),
         _userRepository.getUserByEmail("hankgreen@gmail.com"),
         _userRepository.getUserByEmail("jackblack@gmail.com"),
+        _userRepository.getUserByEmail("jackblack@gmail.com"),
         _userRepository.getUserByEmail("hankgreen@gmail.com"),
+        _userRepository.getUserByEmail("evedavis@gmail.com"),
+        _userRepository.getUserByEmail("frankmiller@gmail.com"),
+        _userRepository.getUserByEmail("evedavis@gmail.com"),
+        _userRepository.getUserByEmail("jackblack@gmail.com"),
+        _userRepository.getUserByEmail("hankgreen@gmail.com"),
+        _userRepository.getUserByEmail("jackblack@gmail.com"),
         _userRepository.getUserByEmail("bobjohnson@gmail.com"),
+        _userRepository.getUserByEmail("jackblack@gmail.com"),
         _userRepository.getUserByEmail("johndoe@gmail.com"),
+        _userRepository.getUserByEmail("ivywhite@gmail.com"),
+        _userRepository.getUserByEmail("ivywhite@gmail.com"),
+        _userRepository.getUserByEmail("evedavis@gmail.com"),
+        _userRepository.getUserByEmail("evedavis@gmail.com"),
+        _userRepository.getUserByEmail("hankgreen@gmail.com"),
+        _userRepository.getUserByEmail("frankmiller@gmail.com"),
         _userRepository.getUserByEmail("hankgreen@gmail.com"),
         _userRepository.getUserByEmail("johndoe@gmail.com"),
+        _userRepository.getUserByEmail("evedavis@gmail.com"),
+        _userRepository.getUserByEmail("frankmiller@gmail.com"),
         _userRepository.getUserByEmail("evedavis@gmail.com"),
         _userRepository.getUserByEmail("frankmiller@gmail.com"),
         _userRepository.getUserByEmail("gracelee@gmail.com"),
@@ -438,35 +467,55 @@ class InitializeFirebase {
         _challengeRepository.getChallengeByName("Challenge 2"),
         _challengeRepository.getChallengeByName("Challenge 15"),
         _challengeRepository.getChallengeByName("Challenge 3"),
+        _challengeRepository.getChallengeByName("Challenge 2"),
         _challengeRepository.getChallengeByName("Challenge 4"),
+        _challengeRepository.getChallengeByName("Challenge 3"),
+        _challengeRepository.getChallengeByName("Challenge 1"),
+        _challengeRepository.getChallengeByName("Challenge 8"),
         _challengeRepository.getChallengeByName("Challenge 5"),
         _challengeRepository.getChallengeByName("Challenge 8"),
         _challengeRepository.getChallengeByName("Challenge 6"),
         _challengeRepository.getChallengeByName("Challenge 8"),
+        _challengeRepository.getChallengeByName("Challenge 3"),
         _challengeRepository.getChallengeByName("Challenge 1"),
+        _challengeRepository.getChallengeByName("Challenge 8"),
         _challengeRepository.getChallengeByName("Challenge 13"),
         _challengeRepository.getChallengeByName("Challenge 7"),
+        _challengeRepository.getChallengeByName("Challenge 8"),
         _challengeRepository.getChallengeByName("Challenge 12"),
+        _challengeRepository.getChallengeByName("Challenge 1"),
         _challengeRepository.getChallengeByName("Challenge 3"),
+        _challengeRepository.getChallengeByName("Challenge 3"),
+        _challengeRepository.getChallengeByName("Challenge 8"),
         _challengeRepository.getChallengeByName("Challenge 15"),
+        _challengeRepository.getChallengeByName("Challenge 2"),
+        _challengeRepository.getChallengeByName("Challenge 1"),
         _challengeRepository.getChallengeByName("Challenge 8"),
         _challengeRepository.getChallengeByName("Challenge 9"),
         _challengeRepository.getChallengeByName("Challenge 10"),
         _challengeRepository.getChallengeByName("Challenge 7"),
+        _challengeRepository.getChallengeByName("Challenge 1"),
+        _challengeRepository.getChallengeByName("Challenge 10"),
+        _challengeRepository.getChallengeByName("Challenge 2"),
         _challengeRepository.getChallengeByName("Challenge 11"),
         _challengeRepository.getChallengeByName("Challenge 8"),
         _challengeRepository.getChallengeByName("Challenge 12"),
         _challengeRepository.getChallengeByName("Challenge 20"),
+        _challengeRepository.getChallengeByName("Challenge 1"),
         _challengeRepository.getChallengeByName("Challenge 19"),
         _challengeRepository.getChallengeByName("Challenge 13"),
         _challengeRepository.getChallengeByName("Challenge 6"),
         _challengeRepository.getChallengeByName("Challenge 14"),
+        _challengeRepository.getChallengeByName("Challenge 13"),
         _challengeRepository.getChallengeByName("Challenge 15"),
         _challengeRepository.getChallengeByName("Challenge 16"),
+        _challengeRepository.getChallengeByName("Challenge 1"),
         _challengeRepository.getChallengeByName("Challenge 17"),
         _challengeRepository.getChallengeByName("Challenge 18"),
+        _challengeRepository.getChallengeByName("Challenge 13"),
         _challengeRepository.getChallengeByName("Challenge 19"),
         _challengeRepository.getChallengeByName("Challenge 20"),
+        _challengeRepository.getChallengeByName("Challenge 1"),
       ]);
 
       for (int i = 0; i < users.length; i++) {
@@ -476,5 +525,38 @@ class InitializeFirebase {
           totalDistance: 0.0 + i,
         ));
       }
+  }
+
+  static Future<void> _initializeRun() async {
+    final users = await _userRepository.getAllUsers();
+    final challenges = await _challengeRepository.getAllChallenges();
+
+    for (var user in users) {
+      for (var challenge in challenges) {
+        await _participantRepository.addParticipant(Participant(
+          userId: user.id!,
+          challengeId: challenge.id!,
+          totalDistance: 0.0,
+        ));
+
+        for (int i = 0; i < 20; i++) {
+          await _runRepository.addRun(Run(
+            userId: user.id!,
+            challengeId: challenge.id,
+            distance: 5.0 + i,
+            duration: 1800 + (i * 60),
+            date: DateTime.now().subtract(Duration(days: i)),
+            steps: 6000 + (i * 100),
+            calories: 300 + (i * 10),
+            averagePace: 6.0 - (i * 0.1),
+            averageSpeed: 10.0 + (i * 0.2),
+            route: [
+              LatLngPoint(latitude: 40.7128, longitude: -74.0060, timestamp: DateTime.now().subtract(Duration(days: i))),
+              LatLngPoint(latitude: 40.7138, longitude: -74.0070, timestamp: DateTime.now().subtract(Duration(days: i)).add(Duration(minutes: 5))),
+            ],
+          ));
+        }
+      }
+    }
   }
 }
