@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:runmate/common/providers/user_id_provider.dart';
 import 'package:runmate/common/utils/date_formatter.dart';
+import 'package:runmate/models/participant.dart';
 import 'package:runmate/repositories/participant_repository.dart';
 import 'package:runmate/repositories/user_repository.dart';
 import '../../../common/utils/constants.dart';
@@ -18,8 +20,10 @@ class OngoingDetailScreen extends StatefulWidget {
 class _OngoingDetailScreenState extends State<OngoingDetailScreen> {
   bool _isLoading = true;
   String _ownerName = "owner";
+  double _totalDistance = 0;
   final UserRepository _userRepository = UserRepository();
   final ParticipantRepository _participantRepository = ParticipantRepository();
+  final String? _userId = UserIdProvider().userId;
 
   @override
   void initState() {
@@ -29,8 +33,10 @@ class _OngoingDetailScreenState extends State<OngoingDetailScreen> {
 
   Future<void> _fetchData() async {
     try {
-      User user = await _userRepository.getUserById(widget.challenge.ownerId);
-      _ownerName = user.name;
+      User owner = await _userRepository.getUserById(widget.challenge.ownerId);
+      Participant? participant = await _participantRepository.getParticipantById(_userId!);
+      _ownerName = owner.name;
+      _totalDistance = participant!.totalDistance;
       setState(() {
         _isLoading = false;
       });
@@ -161,7 +167,7 @@ class _OngoingDetailScreenState extends State<OngoingDetailScreen> {
                       Icon(Icons.directions_walk, color: Colors.white),
                       const SizedBox(width: 8),
                       Text(
-                        'Current Distance: ${100} km',
+                        'Current Distance: $_totalDistance km',
                         style:
                             const TextStyle(color: Colors.white, fontSize: 16),
                       ),
@@ -171,7 +177,7 @@ class _OngoingDetailScreenState extends State<OngoingDetailScreen> {
 
                   // Progress Indicator
                   LinearProgressIndicator(
-                    value: 100 / challenge.goalDistance,
+                    value: _totalDistance / challenge.goalDistance,
                     backgroundColor: Colors.grey[800],
                     valueColor:
                         const AlwaysStoppedAnimation<Color>(Colors.green),
