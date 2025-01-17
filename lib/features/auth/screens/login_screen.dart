@@ -2,9 +2,10 @@ import "package:flutter/material.dart";
 import "package:provider/provider.dart";
 import "../../../common/utils/constants.dart";
 import "../services/auth_service.dart";
-import "../widgets/custom_elevated_button.dart";
+import "../../../common/widgets/custom_elevated_button.dart";
 import "../widgets/custom_text_form_field.dart";
 import "../../../common/providers/user_provider.dart";
+import "../services/user_service.dart";
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -20,6 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController();
 
   final AuthService _authService = AuthService();
+  final UserService _userService = UserService();
 
   bool _isLoading = false;
 
@@ -46,7 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
       final user = await _authService.signInWithEmailAndPassword(email, password);
 
       if(user != null) {
-        final userModel = await _authService.getCurrentUser();
+        final userModel = await _userService.getCurrentUser();
         if(userModel != null) {
           Provider.of<UserProvider>(context, listen: false).setUser(userModel);
 
@@ -64,7 +66,7 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } catch(e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error: ${e.toString()}")),
+        SnackBar(content: Text("Error Login: ${e.toString()}")),
       );
     } finally {
       setState(() {
