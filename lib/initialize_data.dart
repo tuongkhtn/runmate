@@ -27,10 +27,10 @@ class InitializeFirebase {
     // WidgetsFlutterBinding.ensureInitialized();
     // await Firebase.initializeApp();
 
-    await _initializeUsers();
-    await _initializeChallenges();
-    await _initializeParticipants();
-    await _initializeRuns();
+    // await _initializeUsers();
+    // await _initializeChallenges();
+    // await _initializeParticipants();
+    // await _initializeRuns();
     await _initializeInvitations();
   }
 

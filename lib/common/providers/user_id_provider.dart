@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 class UserIdProvider with ChangeNotifier {
-  String? _userId = "ziGLEpsEcwazHVWee44w";
+  String? _userId = "6NiguWUpWdgkwuhs3yQI";
 
   String? get userId => _userId;
 
