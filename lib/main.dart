@@ -19,13 +19,11 @@ import 'common/providers/user_id_provider.dart';
 import 'common/widgets/custom_bottom_navbar.dart';
 
 const bool USE_EMULATOR = false;
-const bool INITIALIZE_FIREBASE = false;
+const bool INITIALIZE_FIREBASE = true;
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  // WidgetsFlutterBinding.ensureInitialized();
+  // await Firebase.initializeApp();
 
   if (USE_EMULATOR) {
     await _connectToEmulator();
