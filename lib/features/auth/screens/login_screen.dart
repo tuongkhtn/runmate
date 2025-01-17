@@ -1,11 +1,11 @@
 import "package:flutter/material.dart";
-import "package:provider/provider.dart";
 import "../../../common/utils/constants.dart";
-import "../services/auth_service.dart";
 import "../../../common/widgets/custom_elevated_button.dart";
 import "../widgets/custom_text_form_field.dart";
-import "../../../common/providers/user_provider.dart";
-import "../services/user_service.dart";
+import "../services/auth_service.dart";
+import "../../../repositories/user_repository.dart";
+import "../../../common/providers/user_id_provider.dart";
+import "package:provider/provider.dart";
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -21,7 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController();
 
   final AuthService _authService = AuthService();
-  final UserService _userService = UserService();
+  final UserRepository _userRepository = UserRepository();
 
   bool _isLoading = false;
 
@@ -48,10 +48,10 @@ class _LoginScreenState extends State<LoginScreen> {
       final user = await _authService.signInWithEmailAndPassword(email, password);
 
       if(user != null) {
-        final userModel = await _userService.getCurrentUser();
-        if(userModel != null) {
-          Provider.of<UserProvider>(context, listen: false).setUser(userModel);
+        Provider.of<UserIdProvider>(context, listen: false).setUserId(user.uid);
 
+        final userModel = await _userRepository.getUserById(user.uid);
+        if(userModel != null) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("Login successful!")),
           );

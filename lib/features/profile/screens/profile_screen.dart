@@ -1,14 +1,12 @@
 import "package:flutter/material.dart";
-import "package:provider/provider.dart";
-import "../../auth/models/user_model.dart";
 import "../../../common/utils/constants.dart";
-import "../../../common/providers/user_provider.dart";
 import "../widgets/editable_text_field.dart";
 import "dart:io";
 import "package:image_picker/image_picker.dart";
-import "../../auth/services/user_service.dart";
 import "../../../common/widgets/custom_elevated_button.dart";
 import "../widgets/avatar_widget.dart";
+import "../../../models/user.dart";
+import "../../../repositories/user_repository.dart";
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -23,28 +21,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final FocusNode _focusNode = FocusNode();
   File? _avatar;
 
-  final UserService _userService = UserService();
+  final UserRepository _userRepository = UserRepository();
 
-  UserModel? _currentUser;
+  late User _currentUser;
   bool _isLoading = false;
   bool _isEditing = false;
 
   @override
   void initState() {
     super.initState();
-    _loadUserData();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadUserData();
+    });
   }
 
   @override
   void dispose() {
     _nameController.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
   Future<void> _loadUserData() async {
-    final user = Provider.of<UserProvider>(context, listen: false).user;
-    if(user != null) {
-      _nameController.text = user.name;
+    // Nhận thông tin người dùng từ arguments
+    final arguments = ModalRoute.of(context)!.settings.arguments;
+    if (arguments is User) {
+      setState(() {
+        _currentUser = arguments;
+        print("User: $_currentUser");
+        _nameController.text = _currentUser.name; // Gán giá trị vào TextField
+      });
     }
   }
 
@@ -71,53 +77,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _saveProfile() async {
-    if(!_formKey.currentState!.validate()) {
-      return;
-    }
 
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      final userProvider = Provider.of<UserProvider>(context, listen: false);
-      final user = userProvider.user;
-
-      if(user != null) {
-        await _userService.updateUser(
-          userId: user.userId,
-          name: _nameController.text.trim(),
-        );
-
-        userProvider.setUser(
-          user.copyWith(
-            name: _nameController.text.trim(),
-          )
-        );
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Profile updated successfully!")),
-        );
-      }
-    } catch(e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error updating profile: $e")),
-      );
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
   }
 
-  Future<void> _logout() async {
+  void _logout() {
     try {
-      Provider.of<UserProvider>(context, listen: false).clearUser();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Logged out successfully!")),
       );
       Navigator.pushReplacementNamed(context, "/login");
-    } catch(e) {
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Error during logout: $e")),
       );
