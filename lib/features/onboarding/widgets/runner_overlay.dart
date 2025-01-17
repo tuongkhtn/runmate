@@ -1,8 +1,6 @@
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 import "../../../common/utils/constants.dart";
-import "package:provider/provider.dart";
-import "../../../common/providers/user_provider.dart";
 
 class RunnerOverlay extends StatelessWidget {
   const RunnerOverlay({super.key});
@@ -14,7 +12,7 @@ class RunnerOverlay extends StatelessWidget {
     if(user != null) {
       Navigator.pushNamed(context, "/home");
     } else {
-      Navigator.pushNamed(context, "/let_run");
+      Navigator.pushNamed(context, "/login");
     }
   }
 
@@ -53,7 +51,7 @@ class RunnerOverlay extends StatelessWidget {
             const SizedBox(height: 15,),
 
             GestureDetector(
-              onTap: () => handleGetStarted(context),
+              onTap: () => Navigator.pushNamed(context, "/login"),
               child: Container(
                   width: double.infinity,
                   height: 50,
