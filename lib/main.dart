@@ -22,9 +22,7 @@ const bool INITIALIZE_FIREBASE = false;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp();
 
   if (USE_EMULATOR) {
     await _connectToEmulator();
@@ -72,6 +70,7 @@ class MyApp extends StatelessWidget {
         '/challenge': (context) => const ChallengeScreen(),
         '/home': (context) =>
             const CustomBottomNavbar(), // ProfileScreen sẽ nhận arguments
+
       },
       initialRoute: '/',
     );

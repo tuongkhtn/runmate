@@ -24,10 +24,8 @@ class InitializeFirebase {
   static final InvitationRepository _invitationRepository = InvitationRepository();
 
   static Future<void> initialize() async {
-    WidgetsFlutterBinding.ensureInitialized();
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
+    // WidgetsFlutterBinding.ensureInitialized();
+    // await Firebase.initializeApp();
 
     await _initializeUsers();
     await _initializeChallenges();
