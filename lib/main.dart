@@ -58,7 +58,7 @@ class MyApp extends StatelessWidget {
           '/let_run': (context) => const RunScreen(),
           '/test': (context) => const UserFormScreen(),
       },
-        initialRoute: '/test',
+        initialRoute: '/',
       ),
     );
   }
