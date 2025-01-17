@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:runmate/common/utils/constants.dart';
+import 'package:runmate/repositories/user_repository.dart';
+import 'package:runmate/models/challenge.dart';
+import 'package:runmate/common/utils/date_formatter.dart';
+
+import '../../../enums/challenge_status_enum.dart'; // Import model Challenge
 
 class OngoingList extends StatefulWidget {
   const OngoingList({super.key});
@@ -9,8 +14,37 @@ class OngoingList extends StatefulWidget {
 }
 
 class _OngoingListState extends State<OngoingList> {
+  final UserRepository _userRepository = UserRepository();
+  bool _isLoading = true; // Trạng thái loading
+  List<Challenge> _challenges = []; // Danh sách challenge
 
-  bool _isLoading = false;
+  @override
+  void initState() {
+    super.initState();
+    _fetchChallenges();
+  }
+
+  Future<void> _fetchChallenges() async {
+    try {
+      // Gọi hàm từ UserRepository
+      final challenges = await _userRepository.getChallengesByStatusAndUserId(
+        ChallengeStatusEnum.ongoing, // Thay bằng trạng thái phù hợp
+        "oHGgNYj8dXV7KR5PfW3z"
+      );
+      setState(() {
+        _challenges = challenges;
+        _isLoading = false;
+      });
+    } catch (e) {
+      // Hiển thị lỗi nếu xảy ra
+      setState(() {
+        _isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error fetching challenges: $e')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +56,7 @@ class _OngoingListState extends State<OngoingList> {
     }
 
     return Scaffold(
-      backgroundColor: kSecondaryColor, // Màu nền của toàn bộ body
+      backgroundColor: kSecondaryColor,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: GridView.count(
@@ -30,50 +64,15 @@ class _OngoingListState extends State<OngoingList> {
           crossAxisSpacing: 16, // Khoảng cách giữa các cột
           mainAxisSpacing: 16, // Khoảng cách giữa các hàng
           childAspectRatio: 0.6, // Tỷ lệ width/height của mỗi card
-          children: [
-            _buildChallengeCard(
-              'Challenge 1',
-              'Complete a 5 km run.',
-              'Jan 1 to Jan 31, 2025',
-              Icons.directions_run,
-            ),
-            _buildChallengeCard(
-              'Challenge 2',
-              'Log 4 swim workouts.',
-              'Jan 1 to Jan 31, 2025',
-              Icons.pool,
-            ),
-            _buildChallengeCard(
-              'Challenge 2',
-              'Log 4 swim workouts.',
-              'Jan 1 to Jan 31, 2025',
-              Icons.pool,
-            ),
-            _buildChallengeCard(
-              'Challenge 2',
-              'Log 4 swim workouts.',
-              'Jan 1 to Jan 31, 2025',
-              Icons.pool,
-            ),
-            _buildChallengeCard(
-              'Challenge 2',
-              'Log 4 swim workouts.',
-              'Jan 1 to Jan 31, 2025',
-              Icons.pool,
-            ),
-            _buildChallengeCard(
-              'Challenge 2',
-              'Log 4 swim workouts.',
-              'Jan 1 to Jan 31, 2025',
-              Icons.pool,
-            ),
-          ],
+          children: _challenges.map((challenge) {
+            return _buildChallengeCard(challenge);
+          }).toList(),
         ),
       ),
     );
   }
 
-  Widget _buildChallengeCard(String title, String description, String period, IconData icon) {
+  Widget _buildChallengeCard(Challenge challenge) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -88,7 +87,7 @@ class _OngoingListState extends State<OngoingList> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                title,
+                challenge.name,
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
@@ -102,16 +101,16 @@ class _OngoingListState extends State<OngoingList> {
                   color: Colors.grey[800],
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(icon, size: 24, color: Colors.white),
+                child: const Icon(Icons.directions_run, size: 24, color: Colors.white),
               ),
               const SizedBox(height: 12),
               Text(
-                description,
+                challenge.description,
                 style: const TextStyle(color: Colors.white),
               ),
               const SizedBox(height: 8),
               Text(
-                period,
+                formatDateRange(challenge.startDate, challenge.endDate),
                 style: TextStyle(
                   color: Colors.grey[500],
                   fontSize: 14,

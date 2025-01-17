@@ -3,10 +3,10 @@
 // import '../../../common/utils/constants.dart';
 //
 // class DetailScreen extends StatefulWidget {
-//   const DetailScreen({super.key})
+//   const DetailScreen({super.key});
 //
 //   @override
-//   State<DetailScreen> createState() =>
+//   State<DetailScreen> createState() => _DetailScreenState();
 //
 // }
 //
@@ -22,6 +22,7 @@
 //       );
 //     }
 //
+//     return Scaffold()
 //
 //   }
 // }

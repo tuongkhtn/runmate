@@ -4,6 +4,7 @@ import "package:cloud_firestore/cloud_firestore.dart";
 import 'package:flutter/material.dart';
 import "package:firebase_core/firebase_core.dart";
 import "package:provider/provider.dart";
+import "package:runmate/features/challenge/screens/challenge_screen.dart";
 import "package:runmate/firebase_options.dart";
 // import "features/let_run/screens/run_screen.dart";
 import "features/onboarding/screens/get_started_screen.dart";
@@ -53,10 +54,11 @@ class MyApp extends StatelessWidget {
           '/login': (context) => const LoginScreen(),
           '/register': (context) => const RegisterScreen(),
           '/home': (context) => const ProfileScreen(),
+          '/challenge': (context) => const ChallengeScreen(),
           // '/let_run': (context) => const RunScreen(),
           // '/test': (context) => const UserFormScreen(),
       },
-        initialRoute: '/',
+        initialRoute: '/challenge',
       ),
     );
   }
