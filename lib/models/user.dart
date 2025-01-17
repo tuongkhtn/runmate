@@ -52,4 +52,31 @@ class User {
       'createdAt': createdAt.toIso8601String(),
     };
   }
+
+  // Phương thức copyWith
+  User copyWith({
+    String? id,
+    String? name,
+    String? email,
+    String? avatarUrl,
+    double? totalDistance,
+    int? totalTime,
+    String? phoneNumber,
+    String? address,
+    DateTime? dateOfBirth,
+    DateTime? createdAt,
+  }) {
+    return User(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      email: email ?? this.email,
+      avatarUrl: avatarUrl ?? this.avatarUrl,
+      totalDistance: totalDistance ?? this.totalDistance,
+      totalTime: totalTime ?? this.totalTime,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      address: address ?? this.address,
+      dateOfBirth: dateOfBirth ?? this.dateOfBirth,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
 }
