@@ -283,58 +283,14 @@ class RunRepository extends BaseRepository {
 
   Future<int> getStreakByUserID(String userID) async {
     try {
-      final now = DateTime.now();
-      // Start of today (midnight)
-      final today = DateTime(now.year, now.month, now.day);
-
       final querySnapshot = await collection
           .where('userId', isEqualTo: userID)
-          .orderBy('date', descending: true)
           .get();
 
-      if (querySnapshot.docs.isEmpty) return 0;
+      return querySnapshot.docs.length;
 
-      int streak = 0;
-      DateTime? lastDate;
-
-      for (var doc in querySnapshot.docs) {
-        final run = Run.fromJson(doc.data() as Map<String, dynamic>);
-        // Convert run date to start of day for comparison
-        final runDate = DateTime(
-            run.date.year,
-            run.date.month,
-            run.date.day
-        );
-
-        // Initialize streak if this is first run
-        if (lastDate == null) {
-          // Only count if run is today or yesterday
-          if (today.difference(runDate).inDays <= 1) {
-            streak = 1;
-            lastDate = runDate;
-            continue;
-          } else {
-            // First run is older than yesterday - no active streak
-            return 0;
-          }
-        }
-
-        // Check if this run is consecutive with last run
-        if (lastDate.difference(runDate).inDays == 1) {
-          streak++;
-          lastDate = runDate;
-        } else if (lastDate.difference(runDate).inDays == 0) {
-          // Multiple runs same day - ignore
-          continue;
-        } else {
-          // Gap found - end streak count
-          break;
-        }
-      }
-
-      return streak;
     } catch (e) {
-      throw Exception('Error getting streak by user ID: $e');
+      throw Exception('Error getting run count by user ID: $e');
     }
   }
   }
