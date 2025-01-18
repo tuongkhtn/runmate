@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:runmate/common/utils/constants.dart';
 import 'package:runmate/common/utils/date_formatter.dart';
+import 'package:runmate/features/challenge/screens/completed_detail_screen.dart';
 import 'package:runmate/repositories/participant_repository.dart';
-import 'package:runmate/repositories/user_repository.dart';
 
+import '../../../common/providers/user_id_provider.dart';
 import '../../../enums/challenge_status_enum.dart';
 import '../../../models/challenge.dart';
 
@@ -16,6 +17,7 @@ class CompletedList extends StatefulWidget {
 
 class _CompletedListState extends State<CompletedList> {
   final ParticipantRepository _participantRepository = ParticipantRepository();
+  final String _userId = UserIdProvider().userId;
   bool _isLoading = true;
   List<Challenge> _challenges = []; // Danh sách challenge
 
@@ -36,14 +38,14 @@ class _CompletedListState extends State<CompletedList> {
 
     if (_challenges.isEmpty) {
       return Container(
-        color: kSecondaryColor, // Đặt màu nền (thay bằng màu bạn muốn)
+        color: kSecondaryColor,
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // Biểu tượng
               Icon(
-                Icons.sentiment_dissatisfied_outlined, // Biểu tượng hộp trống
+                Icons.sentiment_dissatisfied_outlined,
                 size: 80,
                 color: Colors.grey[400],
               ),
@@ -63,14 +65,14 @@ class _CompletedListState extends State<CompletedList> {
     }
 
     return Scaffold(
-      backgroundColor: kSecondaryColor, // Màu nền của toàn bộ body
+      backgroundColor: kSecondaryColor,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: GridView.count(
-          crossAxisCount: 2, // Hiển thị 2 cột
-          crossAxisSpacing: 16, // Khoảng cách giữa các cột
-          mainAxisSpacing: 16, // Khoảng cách giữa các hàng
-          childAspectRatio: 0.6, // Tỷ lệ width/height của mỗi card
+          crossAxisCount: 2,
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 16,
+          childAspectRatio: 0.6,
           children: _challenges.map((challenge) {
             return _buildChallengeCard(challenge);
           }).toList(),
@@ -83,8 +85,8 @@ class _CompletedListState extends State<CompletedList> {
     try {
       // Gọi hàm từ UserRepository
       final challenges = await _participantRepository.getChallengesByStatusAndUserId(
-          ChallengeStatusEnum.completed, // Thay bằng trạng thái phù hợp
-          "SqhUBChJjWwJq5tvdf8P"
+          ChallengeStatusEnum.completed,
+          _userId
       );
       setState(() {
         _challenges = challenges;
@@ -150,7 +152,14 @@ class _CompletedListState extends State<CompletedList> {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CompletedDetailScreen(challenge: challenge),
+                  ),
+                );
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: kPrimaryColor,
                 padding: const EdgeInsets.symmetric(vertical: 12),

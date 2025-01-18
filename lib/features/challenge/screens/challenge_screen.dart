@@ -39,35 +39,9 @@ class ChallengeScreen extends StatelessWidget {
           ),
           actions: [
             IconButton(
-              icon: const Icon(Icons.notification_add_outlined),
+              icon: const Icon(Icons.notifications_none_outlined),
               color: Colors.white,
               onPressed: () {},
-            ),
-            IconButton(
-              icon: const Icon(Icons.search),
-              color: Colors.white,
-              onPressed: () {},
-            ),
-            Stack(
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.settings),
-                  color: Colors.white,
-                  onPressed: () {},
-                ),
-                Positioned(
-                  right: 8,
-                  top: 8,
-                  child: Container(
-                    width: 8,
-                    height: 8,
-                    decoration: const BoxDecoration(
-                      color: Colors.red,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                ),
-              ],
             ),
           ],
         ),

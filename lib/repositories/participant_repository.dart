@@ -64,6 +64,25 @@ class ParticipantRepository extends BaseRepository {
     }
   }
 
+  Future<Participant?> getParticipantByChallengeIdAndUserId(String challengeId, String userId) async {
+    try {
+      final snapshot = await collection
+          .where('challengeId', isEqualTo: challengeId)
+          .where('userId', isEqualTo: userId)
+          .get();
+
+      if (snapshot.docs.isEmpty) return null;
+
+      final doc = snapshot.docs.first;
+      Participant participant = Participant.fromJson(doc.data() as Map<String, dynamic>);
+      participant.id = doc.id;
+      return participant;
+    } catch (e) {
+      throw Exception('Error getting participant by challenge ID and user ID: $e');
+    }
+  }
+
+
   Future<List<Participant>> getParticipantsByUserId(String userId) async {
     try {
       final snapshot = await collection.where('userId', isEqualTo: userId).get();
@@ -146,10 +165,28 @@ class ParticipantRepository extends BaseRepository {
     }
   }
 
-  Future<List<Challenge>> getRecommendedChallenges(String participantId) async {
+  // Future<List<Challenge>> getRecommendedChallenges(String participantId) async {
+  //   try {
+  //     List<Challenge> allChallenges = await challengeRepository.getAllChallenges();
+  //     List<Participant> participantChallenges = await getParticipantsByUserId(participantId);
+  //     List<String?> participatedChallengeIds = participantChallenges.map((p) => p.challengeId).toList();
+  //
+  //     List<Challenge> recommendedChallenges = allChallenges.where((challenge) {
+  //       return !participatedChallengeIds.contains(challenge.id);
+  //     }).toList();
+  //
+  //     return recommendedChallenges;
+  //   } catch (e) {
+  //     throw Exception('Error getting recommended challenges: $e');
+  //   }
+  // }
+
+  Future<List<Challenge>> getRecommendedChallengesByUserId(String userId) async {
     try {
       List<Challenge> allChallenges = await challengeRepository.getAllChallenges();
-      List<Participant> participantChallenges = await getParticipantsByUserId(participantId);
+
+      List<Participant> participantChallenges = await getParticipantsByUserId(userId);
+
       List<String?> participatedChallengeIds = participantChallenges.map((p) => p.challengeId).toList();
 
       List<Challenge> recommendedChallenges = allChallenges.where((challenge) {
@@ -158,9 +195,10 @@ class ParticipantRepository extends BaseRepository {
 
       return recommendedChallenges;
     } catch (e) {
-      throw Exception('Error getting recommended challenges: $e');
+      throw Exception('Error getting recommended challenges for userId $userId: $e');
     }
   }
+
 
   Future<Participant> updateParticipant(String participantId, Participant participant) async {
     try {

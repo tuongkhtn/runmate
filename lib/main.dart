@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import "package:firebase_core/firebase_core.dart";
 import "package:provider/provider.dart";
 import "package:runmate/features/challenge/screens/challenge_screen.dart";
-import "package:runmate/firebase_options.dart";
 import "package:runmate/initialize_data.dart";
 import "common/providers/user_id_provider.dart";
 import "features/challenge/screens/detail_challenge_owner_screen.dart";
@@ -15,7 +14,6 @@ import "features/auth/screens/register_screen.dart";
 import "features/profile/screens/profile_screen.dart";
 import "features/test_screen.dart";
 import 'common/widgets/custom_bottom_navbar.dart';
-import "package:firebase_app_check/firebase_app_check.dart";
 
 const bool USE_EMULATOR = false;
 const bool INITIALIZE_FIREBASE = false;
@@ -73,7 +71,7 @@ class MyApp extends StatelessWidget {
         '/detail_challenge_owner': (context) => const ChallengeOwnerScreen(challengeId: "qLiGumbV2R18vl0CeNwD"),
 
       },
-      initialRoute: '/detail_challenge_owner',
+      initialRoute: '/',
     );
   }
 }

@@ -3,6 +3,7 @@ import 'package:runmate/common/utils/constants.dart';
 import 'package:runmate/common/utils/date_formatter.dart';
 import 'package:runmate/repositories/participant_repository.dart';
 
+import '../../../common/providers/user_id_provider.dart';
 import '../../../enums/challenge_status_enum.dart';
 import '../../../models/challenge.dart';
 
@@ -15,6 +16,7 @@ class RecommendedList extends StatefulWidget {
 
 class _RecommendedListState extends State<RecommendedList> {
   final ParticipantRepository _participantRepository = ParticipantRepository();
+  final String _userId = UserIdProvider().userId;
   bool _isLoading = false;
   List<Challenge> _challenges = []; // Danh sách challenge
 
@@ -27,16 +29,15 @@ class _RecommendedListState extends State<RecommendedList> {
   Future<void> _fetchChallenges() async {
     try {
       // Gọi hàm từ UserRepository
-      final challenges = await _participantRepository.getChallengesByStatusAndUserId(
-          ChallengeStatusEnum.ongoing, // Thay bằng trạng thái phù hợp
-          "SqhUBChJjWwJq5tvdf8P"
+      final challenges = await _participantRepository.getRecommendedChallengesByUserId(
+          _userId
       );
       setState(() {
         _challenges = challenges;
         _isLoading = false;
       });
     } catch (e) {
-      // Hiển thị lỗi nếu xảy ra
+
       setState(() {
         _isLoading = false;
       });
@@ -52,6 +53,41 @@ class _RecommendedListState extends State<RecommendedList> {
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
         backgroundColor: kSecondaryColor,
+      );
+    }
+
+    if (_challenges.isEmpty) {
+      return Container(
+        color: kSecondaryColor, // Đặt màu nền (thay bằng màu bạn muốn)
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Biểu tượng
+              Icon(
+                Icons.hourglass_empty_outlined, // Biểu tượng hộp trống
+                size: 80,
+                color: Colors.grey[400],
+              ),
+              const SizedBox(height: 16),
+              // Dòng thông báo
+              const Text(
+                "No challenges have been recommended for you",
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.white,
+                ),
+              ),
+              const Text(
+                "Please check back later",
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
       );
     }
 
@@ -101,7 +137,7 @@ class _RecommendedListState extends State<RecommendedList> {
                   color: Colors.grey[800],
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(Icons.directions_run, size: 24, color: Colors.white),
+                child: const Icon(Icons.directions_run, size: 24, color: Colors.white),
               ),
               const SizedBox(height: 12),
               Text(

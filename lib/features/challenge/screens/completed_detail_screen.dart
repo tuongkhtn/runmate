@@ -23,7 +23,7 @@ class _CompletedDetailScreenState extends State<CompletedDetailScreen> {
   double _totalDistance = 0;
   final UserRepository _userRepository = UserRepository();
   final ParticipantRepository _participantRepository = ParticipantRepository();
-  final String? _userId = UserIdProvider().userId;
+  final String _userId = UserIdProvider().userId;
 
   @override
   void initState() {
@@ -34,9 +34,9 @@ class _CompletedDetailScreenState extends State<CompletedDetailScreen> {
   Future<void> _fetchData() async {
     try {
       User owner = await _userRepository.getUserById(widget.challenge.ownerId);
-      Participant? participant = await _participantRepository.getParticipantById(_userId!);
+      Participant? participant = await _participantRepository.getParticipantByChallengeIdAndUserId(widget.challenge.id.toString(), _userId);
       _ownerName = owner.name;
-      _totalDistance = participant!.totalDistance;
+      _totalDistance = participant?.totalDistance ?? 0;
       setState(() {
         _isLoading = false;
       });
@@ -89,7 +89,7 @@ class _CompletedDetailScreenState extends State<CompletedDetailScreen> {
                     children: [
                       // Owner Name
                       Text(
-                        'Owner: ${_ownerName}',
+                        'Owner: $_ownerName',
                         style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 12),
@@ -107,10 +107,10 @@ class _CompletedDetailScreenState extends State<CompletedDetailScreen> {
                         children: [
                           Row(
                             children: [
-                              Icon(Icons.calendar_today, color: Colors.white),
+                              const Icon(Icons.calendar_today, color: Colors.white),
                               const SizedBox(width: 8),
                               Text(
-                                '${formatDateRange(challenge.startDate, challenge.endDate)}',
+                                formatDateRange(challenge.startDate, challenge.endDate),
                                 style: const TextStyle(color: Colors.white),
                               ),
                             ],
@@ -123,7 +123,7 @@ class _CompletedDetailScreenState extends State<CompletedDetailScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Icon(Icons.directions_run_outlined, color: Colors.white),
+                          const Icon(Icons.directions_run_outlined, color: Colors.white),
                           const SizedBox(width: 8),
                           Text(
                             'Participants: ${challenge.totalNumberOfParticipants}',
@@ -150,7 +150,7 @@ class _CompletedDetailScreenState extends State<CompletedDetailScreen> {
                       // Goal Distance with icon
                       Row(
                         children: [
-                          Icon(Icons.location_on, color: Colors.white),
+                          const Icon(Icons.location_on, color: Colors.white),
                           const SizedBox(width: 8),
                           Text(
                             'Goal Distance: ${challenge.goalDistance} km',
@@ -164,7 +164,7 @@ class _CompletedDetailScreenState extends State<CompletedDetailScreen> {
                       // Current Distance with icon
                       Row(
                         children: [
-                          Icon(Icons.directions_walk, color: Colors.white),
+                          const Icon(Icons.directions_walk, color: Colors.white),
                           const SizedBox(width: 8),
                           Text(
                             'Your Distance: $_totalDistance km',

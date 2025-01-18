@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:runmate/common/providers/user_id_provider.dart';
 import 'package:runmate/common/utils/constants.dart';
 import 'package:runmate/repositories/participant_repository.dart';
-import 'package:runmate/repositories/user_repository.dart';
 import 'package:runmate/models/challenge.dart';
 import 'package:runmate/common/utils/date_formatter.dart';
 
@@ -17,6 +17,7 @@ class OngoingList extends StatefulWidget {
 
 class _OngoingListState extends State<OngoingList> {
   final ParticipantRepository _participantRepository = ParticipantRepository();
+  final String _userId = UserIdProvider().userId;
   bool _isLoading = true; // Trạng thái loading
   List<Challenge> _challenges = []; // Danh sách challenge
 
@@ -31,7 +32,7 @@ class _OngoingListState extends State<OngoingList> {
       // Gọi hàm từ UserRepository
       final challenges = await _participantRepository.getChallengesByStatusAndUserId(
         ChallengeStatusEnum.ongoing, // Thay bằng trạng thái phù hợp
-        "uHc1cbv0vMvLH3qG9Bh6"
+        _userId
       );
       setState(() {
         _challenges = challenges;
@@ -59,20 +60,20 @@ class _OngoingListState extends State<OngoingList> {
 
     if (_challenges.isEmpty) {
       return Container(
-        color: kSecondaryColor, // Đặt màu nền (thay bằng màu bạn muốn)
+        color: kSecondaryColor,
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // Biểu tượng
               Icon(
-                Icons.emoji_people, // Biểu tượng hộp trống
+                Icons.emoji_people,
                 size: 80,
                 color: Colors.grey[400],
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               // Dòng thông báo
-              Text(
+              const Text(
                 'No challenges on-going now. Let\'s join some!',
                 style: TextStyle(
                   fontSize: 18,

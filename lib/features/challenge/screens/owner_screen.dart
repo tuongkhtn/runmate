@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:runmate/common/providers/user_id_provider.dart';
 import 'package:runmate/common/utils/constants.dart';
 import 'package:runmate/common/utils/date_formatter.dart';
+import 'package:runmate/features/challenge/screens/detail_challenge_owner_screen.dart';
 import 'package:runmate/repositories/challenge_repository.dart';
 
 import '../../../models/challenge.dart';
@@ -14,6 +16,7 @@ class OwnerList extends StatefulWidget {
 
 class _OwnerListState extends State<OwnerList> {
   final ChallengeRepository _challengeRepository = ChallengeRepository();
+  final String _userId =UserIdProvider().userId;
   bool _isLoading = false;
   List<Challenge> _challenges = []; // Danh sách challenge
 
@@ -27,7 +30,7 @@ class _OwnerListState extends State<OwnerList> {
     try {
       // Gọi hàm từ UserRepository
       final challenges =
-                  await _challengeRepository.getChallengesByOwnerId(ownerId: "W5uwfWdOvlPfiWSo1y30");
+                  await _challengeRepository.getChallengesByOwnerId(ownerId: _userId);
       setState(() {
         _challenges = challenges;
         _isLoading = false;
@@ -118,7 +121,14 @@ class _OwnerListState extends State<OwnerList> {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ChallengeOwnerScreen(challengeId: challenge.id.toString()),
+                    ),
+                  );
+                },
               style: ElevatedButton.styleFrom(
                 backgroundColor: kPrimaryColor,
                 padding: const EdgeInsets.symmetric(vertical: 12),

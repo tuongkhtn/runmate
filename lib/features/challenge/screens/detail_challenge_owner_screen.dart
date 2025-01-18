@@ -86,14 +86,14 @@ class _ChallengeOwnerScreenState extends State<ChallengeOwnerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController _emailController = TextEditingController();
+    final TextEditingController emailController = TextEditingController();
     bool isValidEmail(String email) {
       final emailRegex = RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
       return emailRegex.hasMatch(email);
     }
     void HandleInvite()  async{
 
-      String email = _emailController.text.trim();
+      String email = emailController.text.trim();
 
       if (email.isNotEmpty && isValidEmail(email)) {
         _invitationRepository.createInvitationWithEmail(challenge.id!, email).then((success) {
@@ -421,7 +421,7 @@ class _ChallengeOwnerScreenState extends State<ChallengeOwnerScreen> {
                           Expanded(
                             child: TextField(
                               style: const TextStyle(color: Colors.white),
-                              controller: _emailController,
+                              controller: emailController,
                               decoration: InputDecoration(
                                 labelText: 'Invite by Email',
                                 labelStyle:
