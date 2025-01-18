@@ -70,9 +70,10 @@ class MyApp extends StatelessWidget {
         '/challenge': (context) => const ChallengeScreen(),
         '/home': (context) =>
             const CustomBottomNavbar(), // ProfileScreen sẽ nhận arguments
+        '/detail_challenge_owner': (context) => const ChallengeOwnerScreen(challengeId: "qLiGumbV2R18vl0CeNwD"),
 
       },
-      initialRoute: '/',
+      initialRoute: '/detail_challenge_owner',
     );
   }
 }

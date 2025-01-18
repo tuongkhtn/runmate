@@ -12,6 +12,27 @@ class InvitationRepository extends BaseRepository {
 
   Future<Invitation> createInvitation(Invitation invitation) async {
     try {
+      // Kiểm tra email có tồn tại trong User hay không
+      final userSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .where('email', isEqualTo: invitation.email)
+          .get();
+
+      if (userSnapshot.docs.isEmpty) {
+        throw Exception('No user found with this email');
+      }
+
+      final invitationSnapshot = await FirebaseFirestore.instance
+          .collection('invitations')
+          .where('challengeId', isEqualTo: invitation.challengeId)
+          .where('email', isEqualTo: invitation.email)
+          .where('status', isEqualTo: 'pending')
+          .get();
+
+      if (invitationSnapshot.docs.isNotEmpty) {
+        throw Exception('An invitation with this email is already pending');
+      }
+
       final docRef = await collection.add(invitation.toJson());
       Invitation createdInvitation = await getInvitationById(docRef.id);
       createdInvitation.id = docRef.id;
@@ -21,6 +42,7 @@ class InvitationRepository extends BaseRepository {
       throw Exception('Error creating invitation: $e');
     }
   }
+
 
   Future<Invitation> createInvitationWithEmail(String challengeId, String email) async {
     try {
@@ -58,7 +80,7 @@ class InvitationRepository extends BaseRepository {
 
   Future<List<Invitation>> getInvitationsByChallengeId(String challengeId) async {
     try {
-      final snapshot = await collection.where('challengeId', isEqualTo: challengeId).get();
+      final snapshot = await collection.where('challengeId', isEqualTo: challengeId).where('status', isEqualTo: 'pending').get();
       return snapshot.docs.map((doc) {
         Invitation invitation = Invitation.fromJson(doc.data() as Map<String, dynamic>);
         invitation.id = doc.id;
@@ -113,6 +135,17 @@ class InvitationRepository extends BaseRepository {
       await collection.doc(invitationId).delete();
     } catch (e) {
       throw Exception('Error deleting invitation: $e');
+    }
+  }
+  
+  Future<void> deleteInvitationsByChallengeIdEmail(String challengeId, String email) async {
+    try {
+      final snapshot = await collection.where('challengeId', isEqualTo: challengeId).where('email', isEqualTo: email).where('status', isEqualTo: 'pending').get();
+      snapshot.docs.forEach((doc) async {
+        await collection.doc(doc.id).delete();
+      });
+    } catch (e) {
+      throw Exception('Error deleting invitations by challenge ID: $e');
     }
   }
 }
