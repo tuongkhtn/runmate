@@ -2,7 +2,7 @@
 <br />
 <div align="center">
   <a>
-    <img src="images/logo.jpg" alt="Logo" width = 300>
+    <img src="assets/images/logo.jpg" alt="Logo" width = 300>
   </a>
   <p align="center">HCMUS</p>
   <p align="center" style="text-transform: uppercase;">CSC13009 - Mobile Software Development</p>
@@ -16,45 +16,34 @@ Runmate is a mobile application designed to help users track and enhance their r
 
 ## Screens
 
+### Register
+
+<div align="center">
+    <img src="assets/images/register.png" width = 500 style = "margin-right: 20px">
+</div>
+
+- Users create new accounts by filling in personal information such as name, email, password and confirm password.
+
 ### Login
 
 <div align="center">
-    <img src="images/login.png" width = 500 style = "margin-right: 20px">
-    <img src="images/login(loading).png" width = 500>
+    <img src="assets/images/login.png" width = 500 style = "margin-right: 20px">
 </div>
 
-- Player can choose an existing account or create new account before playing game.
+- Users log into the system by entering their previously registered email and password.
 
-### Main Menu
+### Home
 
 <div align="center">
     <img src="images/mainmenu.png" width = 500>
 </div>
 
-- Player can continue the previous process (for existing account) or create new game (start from level 1).
-- Player can navigate to leaderboard, instruction or sign out of this account.
-
-### Game Play
-
 <div align="center" style = "margin-bottom: 20px">
-    <img src="images/gameplay.png" width = 500 style = "margin-right: 20px">
-    <img src="images/pause.png" width = 500>
-</div>
-<div align="center">
-    <img src="images/victory.png" width = 500 style = "margin-right: 20px">
-    <img src="images/lose.png" width = 500>
+    <img src="assets/images/home.png" width = 500 style = "margin-right: 20px">
 </div>
 
-- Player need to pass through the road without any collisions to complete each level.
-- The number of levels is unlimited.
-- If you win, you can either go to next level or go home. If you lose, let's play again and conquer all the missions.
+- Displays an overview of user activity, including running statistics, displaying running-related events.
 
-### Leaderboard and instruction
+### Run
 
-<div align="center">
-    <img src="images/leaderboard.png" width = 500 style = "margin-right: 20px">
-    <img src="images/instruction.png" width = 500>
-</div>
-
-- The score of each player is based on his/her level and the playing time.
-- Player should read the instruction first before going to the challenge.
+### Challenge
