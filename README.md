@@ -19,7 +19,7 @@ Runmate is a mobile application designed to help users track and enhance their r
 ### Register
 
 <div align="center">
-    <img src="assets/images/register.png" width = 500 style = "margin-right: 20px">
+    <img src="assets/images/register.png" style = "width: 20%; margin-right: 20px">
 </div>
 
 - Users create new accounts by filling in personal information such as name, email, password and confirm password.
@@ -27,19 +27,15 @@ Runmate is a mobile application designed to help users track and enhance their r
 ### Login
 
 <div align="center">
-    <img src="assets/images/login.png" width = 500 style = "margin-right: 20px">
+    <img src="assets/images/login.png" style = "width: 20%; margin-right: 20px">
 </div>
 
 - Users log into the system by entering their previously registered email and password.
 
 ### Home
 
-<div align="center">
-    <img src="images/mainmenu.png" width = 500>
-</div>
-
 <div align="center" style = "margin-bottom: 20px">
-    <img src="assets/images/home.png" width = 500 style = "margin-right: 20px">
+    <img src="assets/images/home.png" style = "width: 20%; margin-right: 20px">
 </div>
 
 - Displays an overview of user activity, including running statistics, displaying running-related events.
