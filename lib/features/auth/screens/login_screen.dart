@@ -32,15 +32,29 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void _login() {
-    if(!_formKey.currentState!.validate()) {
+  Future<void> _login() async {
+    if (!_formKey.currentState!.validate()) {
       return;
     }
 
-    Provider.of<UserIdProvider>(context, listen: false).setUserId("6NiguWUpWdgkwuhs3yQI");
+    try {
+      final user = await _authService.signInWithEmailAndPassword(
+        _emailController.text.trim(),
+        _passwordController.text.trim(),
+      );
 
-    Navigator.pushNamed(context, '/home');
+      if (user != null) {
+        Provider.of<UserIdProvider>(context, listen: false).setUserId(user.uid);
+
+        Navigator.pushNamed(context, '/home');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {
