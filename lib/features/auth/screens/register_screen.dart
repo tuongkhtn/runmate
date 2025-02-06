@@ -3,7 +3,6 @@ import "../../../common/utils/constants.dart";
 import "../widgets/custom_text_form_field.dart";
 import "../../../common/widgets/custom_elevated_button.dart";
 import "../services/auth_service.dart";
-import "../../../models/user.dart";
 import "../../../repositories/user_repository.dart";
 
 class RegisterScreen extends StatefulWidget {
@@ -42,7 +41,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
       return;
     }
 
-    Navigator.pushNamed(context, "/login");
+    try {
+      final user = await _authService.registerWithEmailAndPassword(
+        _emailController.text.trim(),
+        _passwordController.text.trim(),
+      );
+
+      if (user != null) {
+        Navigator.pushNamed(context, "/login");
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+    }
   }
 
   @override

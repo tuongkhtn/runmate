@@ -1,16 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-// import "package:firebase_storage/firebase_storage.dart";
-import '../models/user_model.dart';
+import "package:firebase_storage/firebase_storage.dart";
+import "../../../models/user.dart" as user_model;
 import "dart:io";
 
 class UserService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  // final FirebaseStorage _storage = FirebaseStorage.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
 
-  Future<void> saveUserToFirestore(UserModel userModel) async {
-    final userRef = _firestore.collection("users").doc(userModel.userId);
+  Future<void> saveUserToFirestore(user_model.User userModel) async {
+    final userRef = _firestore.collection("users").doc(userModel.id);
     try {
       await userRef.set(userModel.toJson());
     } catch (e) {
@@ -18,7 +18,7 @@ class UserService {
     }
   }
 
-  Future<UserModel?> getCurrentUser() async {
+  Future<user_model.User?> getCurrentUser() async {
     try {
       final user = _auth.currentUser;
       if (user == null) return null;
@@ -26,7 +26,7 @@ class UserService {
       final userDoc = await _firestore.collection("users").doc(user.uid).get();
       if (!userDoc.exists) return null;
 
-      return UserModel.fromJson(userDoc.data()!);
+      return user_model.User.fromJson(userDoc.data()!);
     } catch (e) {
       throw Exception("Error fetching current user: $e");
     }
@@ -63,14 +63,14 @@ class UserService {
     }
   }
 
-  // Future<String> uploadAvatar(File avatar) async {
-  //   try {
-  //     final storageRef = _storage.ref().child('avatars/${DateTime.now().millisecondsSinceEpoch}.jpg');
-  //     await storageRef.putFile(avatar);
-  //     final url = await storageRef.getDownloadURL();
-  //     return url;
-  //   } catch(e) {
-  //     throw Exception("Failed to upload avatar: $e");
-  //   }
-  // }
+  Future<String> uploadAvatar(File avatar) async {
+    try {
+      final storageRef = _storage.ref().child('avatars/${DateTime.now().millisecondsSinceEpoch}.jpg');
+      await storageRef.putFile(avatar);
+      final url = await storageRef.getDownloadURL();
+      return url;
+    } catch(e) {
+      throw Exception("Failed to upload avatar: $e");
+    }
+  }
 }
